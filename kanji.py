@@ -41,4 +41,6 @@ def dump():
     print_range("---katakana---", 0x30a1, 0x30fa)
     dump_csv()
 
-dump_csv()
+if __name__ == "__main__":
+    p = argparse.parser("Kanji Tools")
+    dump_csv()
