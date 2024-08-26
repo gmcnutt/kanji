@@ -32,4 +32,4 @@ with open("kanji.csv") as f:
         on = decode(on)
         phr = decode_phrase(phr)
         phr_kana = decode_phrase(phr_kana)
-        print(f'{rk2} {unic} {mean} {on} {phr} {phr_kana} {phr_eng}')
+        print(f'{rk2:<2} {unic} {mean:12} {on}  {phr:<6} {phr_kana:6} {phr_eng}')
