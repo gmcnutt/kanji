@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import argparse
 import csv
+import sys, tty, termios
+from termcolor import colored, cprint
 
 
 def print_range(title, start, end):
@@ -49,7 +51,8 @@ def load_data():
                 }
             })
         return data
-            
+
+
 def dump_csv():
     data = load_data()
     for d in data:
@@ -58,14 +61,52 @@ def dump_csv():
         phr_eng =  d["exemplary_phrase"]["meaning"]
         print(f'{d["rk2"]:<2} {d["unicode"]} {d["meaning"]:12} {d["on"]}  {phr:<6} {phr_kana:6} {phr_eng}')
 
+
 def dump():
     print_range("---hiragana---", 0x3041, 0x3096)
     print_range("---katakana---", 0x30a1, 0x30fa)
     dump_csv()
 
+
+def getch():
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+    return ch
+
+
+def prompt(str):
+    print(str, end='', flush=True)
+    return getch()
+
+
+def backspace(str):
+    x = '\b' * len(str)
+    sys.stdout.write(x)
+    y = ' ' * len(str)
+    sys.stdout.write(y)
+    sys.stdout.write(x)
+
+
 def rtk1():
-    print("Drill")
-    
+    data = load_data()
+    print("Write the kanji for the given meaning then hit <Enter>...")
+    instr1 = '<Press any key to check>'
+    instr2 = 'correct? <y/n>'
+    for d in data[:2]:
+        prompt(f'{colored(d["meaning"], attrs=["bold"]):16} {colored(instr1, "yellow")}')
+        backspace(instr1)
+        ok = prompt(f' {colored(d["unicode"], "cyan", attrs=["bold"])} {colored(instr2, "yellow")}')
+        backspace(instr2)
+        if ok == 'y':
+            cprint("ok", "green", attrs=["bold"])
+        else:
+            cprint("fail", "red", attrs=["bold"])
+
 if __name__ == "__main__":
     pars = argparse.ArgumentParser(description="Kanji Tools")
     subp = pars.add_subparsers(help="Commands", required=True)
