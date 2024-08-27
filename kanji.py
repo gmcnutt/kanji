@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import argparse
 import csv
+from datetime import datetime, timedelta
+import json
 import sys, tty, termios
 from termcolor import colored, cprint
 
@@ -81,8 +83,8 @@ def roma2hira(phr):
     return "".join(res)
 
 
-def load_data():
-    data = []
+def load_cards():
+    data = {}
     with open("kanji.csv") as f:
         r = csv.reader(f)
         header = next(r)
@@ -92,7 +94,7 @@ def load_data():
             on = roma2kata(on)
             phr = decode_phrase(phr)
             phr_kana = roma2hira(phr_kana)
-            data.append({
+            data[rk2] = {
                 "rk2": rk2,
                 "unicode": unic,
                 "meaning": mean,
@@ -104,7 +106,7 @@ def load_data():
                     "kana": phr_kana,
                     "meaning": phr_eng
                 }
-            })
+            }
         return data
 
     
@@ -119,12 +121,12 @@ def dump_entry(d):
 
     
 def dump_csv():
-    data = load_data()
-    for d in data:
+    data = load_cards()
+    for d in data.values():
         dump_entry(d)
 
 
-def dump():
+def dump(devmode=False):
     print_range("---hiragana---", 0x3041, 0x3096)
     print_range("---katakana---", 0x30a1, 0x30fa)
     dump_csv()
@@ -152,69 +154,64 @@ def backspace(str):
     y = ' ' * len(str)
     sys.stdout.write(y)
     sys.stdout.write(x)
-
-
-def rtk1():
-    data = load_data()
-    print("Write the kanji for the given meaning then hit <Enter>...")
+        
+    
+def review_card(card):
     instr1 = '<Press any key to check>'
     instr2 = 'correct? <y/n>'
-    for d in data[:2]:
-        prompt(f'{colored(d["meaning"], attrs=["bold"]):16} {colored(instr1, "yellow")}')
-        backspace(instr1)
-        ok = prompt(f' {colored(d["unicode"], "cyan", attrs=["bold"])} {colored(instr2, "yellow")}')
-        backspace(instr2)
-        if ok == 'y':
-            cprint("ok", "green", attrs=["bold"])
-        else:
-            cprint("fail", "red", attrs=["bold"])
+    prompt(f'{colored(card["meaning"], attrs=["bold"]):16} {colored(instr1, "yellow")}')
+    backspace(instr1)
+    ok = prompt(f' {colored(card["unicode"], "cyan", attrs=["bold"])} {colored(instr2, "yellow")}')
+    backspace(instr2)
+    if ok == 'y':
+        cprint("ok", "green", attrs=["bold"])
+        return True
+    else:
+        cprint("fail", "red", attrs=["bold"])
+        return False
 
-def add():
-    data = load_data()
-    instr2 = 'correct? <y/n>'
 
-    while True:
-        entry = {}
+def review(devmode=False):
+    FMT = '%Y-%m-%d'
+    cards = load_cards()    
+    with open('review.json') as f:
+        try:
+            session = json.load(f)
+        except:
+            session = {}
+    today = datetime.today()
 
-        index = len(data)
-        print(f'R-{index}')
-        entry["rk2"] = index
+    # Add new cards
+    for k in cards.keys():
+        if k not in session:
+            session[k] = [0, today.strftime(FMT)]
 
-        entry["unicode"] = decode(input("Unicode: "))
-        entry["meaning"] = input("Meaning: ")
-        entry["strokes"] = input("Strokes: ")
-        entry["on"] = input("on: ")
-        entry["rk1"] = input("rk1: ")
-        entry["phrase"] = {}
-        entry["phrase"]["kanji"] = decode_phrase(input("Phrase kanji: "))
-        entry["phrase"]["kana"] = input("Phrase kana: ")
-        entry["phrase"]["meaning"] = input("Phrase meaning: ")
-        dump_entry(entry)
+    # Prompt for due cards
+    print("Write the kanji for the given meaning then hit <Enter>...")            
+    for k, r in session.items():
+        age = today - datetime.strptime(r[1], FMT)
+        if age.days >= r[0]:
+            if review_card(cards[k]):
+                r[0] += 1
+            else:
+                r[0] = 0
+            r[1] = today.strftime(FMT)
 
-        ok = prompt(f'{colored(instr2, "yellow")}')
-        backspace(instr2)
-        if ok == 'y':
-            cprint("Added", "green", attrs=["bold"])
-            data.append(entry)
-        else:
-            cprint("Discarded", "red", attrs=["bold"])
-    
-    
-    
+    # Save results
+    with open('review.json', 'w') as f:
+        json.dump(session, f)
 
-            
+
 if __name__ == "__main__":
     pars = argparse.ArgumentParser(description="Kanji Tools")
+    pars.add_argument('-d', '--devmode', action='store_true')
     subp = pars.add_subparsers(help="Commands", required=True)
 
     cmdp = subp.add_parser('dump', help="Dump kana and known kanji")
     cmdp.set_defaults(func=dump)
 
-    cmdp = subp.add_parser('rtk1', help="Drill Remembering the Kanji I")
-    cmdp.set_defaults(func=rtk1)
+    cmdp = subp.add_parser('review', help="Drill Remembering the Kanji I")
+    cmdp.set_defaults(func=review)
 
-    cmdp = subp.add_parser('add', help="Add more kanji")
-    cmdp.set_defaults(func=add)
-    
     args = pars.parse_args()
-    args.func()
+    args.func(devmode=args.devmode)
