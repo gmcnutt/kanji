@@ -126,7 +126,7 @@ def dump_csv():
         dump_entry(d)
 
 
-def dump(devmode=False):
+def dump(args):
     print_range("---hiragana---", 0x3041, 0x3096)
     print_range("---katakana---", 0x30a1, 0x30fa)
     dump_csv()
@@ -157,28 +157,36 @@ def backspace(str):
         
     
 def review_card(card):
-    instr1 = '<Press any key to check>'
+    instr1 = '<Write kanji on paper then press any key>'
     instr2 = 'correct? <y/n>'
+    instr3 = '<Write "on" reading on paper then press any key>'
     prompt(f'{colored(card["meaning"], attrs=["bold"]):16} {colored(instr1, "yellow")}')
     backspace(instr1)
     ok = prompt(f' {colored(card["unicode"], "cyan", attrs=["bold"])} {colored(instr2, "yellow")}')
     backspace(instr2)
-    if ok == 'y':
-        cprint("ok", "green", attrs=["bold"])
-        return True
-    else:
+    if ok != 'y':
         cprint("fail", "red", attrs=["bold"])
         return False
+    
+    prompt(f'{colored(instr3, "yellow")}')
+    backspace(instr3)
+    ok = prompt(f' {colored(card["on"], "cyan", attrs=["bold"])} {colored(instr2, "yellow")}')
+    backspace(instr2)
+    if ok != 'y':
+        cprint("fail", "red", attrs=["bold"])
+        return False
+    cprint("ok ", "green", attrs=["bold"])
+    return True
 
 
-def review(devmode=False):
+def review(args):
     FMT = '%Y-%m-%d'
     cards = load_cards()    
-    with open('review.json') as f:
-        try:
+    try:
+        with open('review.json') as f:
             session = json.load(f)
-        except:
-            session = {}
+    except:
+        session = {}
     today = datetime.today()
 
     # Add new cards
@@ -187,7 +195,6 @@ def review(devmode=False):
             session[k] = [0, today.strftime(FMT)]
 
     # Prompt for due cards
-    print("Write the kanji for the given meaning then hit <Enter>...")            
     for k, r in session.items():
         age = today - datetime.strptime(r[1], FMT)
         if age.days >= r[0]:
@@ -204,7 +211,6 @@ def review(devmode=False):
 
 if __name__ == "__main__":
     pars = argparse.ArgumentParser(description="Kanji Tools")
-    pars.add_argument('-d', '--devmode', action='store_true')
     subp = pars.add_subparsers(help="Commands", required=True)
 
     cmdp = subp.add_parser('dump', help="Dump kana and known kanji")
@@ -214,4 +220,4 @@ if __name__ == "__main__":
     cmdp.set_defaults(func=review)
 
     args = pars.parse_args()
-    args.func(devmode=args.devmode)
+    args.func(args)
