@@ -5,6 +5,18 @@ import sys, tty, termios
 from termcolor import colored, cprint
 
 
+ROMA2KATA = {
+    'sa': '30b5',
+    'se': '30bb',
+    'ta': '30bf',
+    'chi': '30c1',
+    'ni': '30cb',
+    'fu': '30d5',
+    'mi': '30df',
+    'me': '30e1',
+    'ri': '30ea',
+}
+
 def print_range(title, start, end):
     columns = 8
     index = start
@@ -26,6 +38,11 @@ def decode(uni):
 def decode_phrase(phr):
     return "".join(decode(c) for c in phr.split(","))
 
+
+def roma2kata(s):
+    return decode(ROMA2KATA[s])
+
+
 def load_data():
     data = []
     with open("kanji.csv") as f:
@@ -34,7 +51,7 @@ def load_data():
         for line in r:
             rk2, unic, mean, strok, on, rk1, phr,phr_kana,phr_eng=line
             unic = decode(unic)
-            on = decode(on)
+            on = roma2kata(on)
             phr = decode_phrase(phr)
             phr_kana = decode_phrase(phr_kana)
             data.append({
@@ -44,22 +61,26 @@ def load_data():
                 "strokes": strok,
                 "on": on,
                 "rk1": rk1,
-                "exemplary_phrase": {
-                    "phrase": phr,
+                "phrase": {
+                    "kanji": phr,
                     "kana": phr_kana,
                     "meaning": phr_eng
                 }
             })
         return data
 
+    
+def dump_entry(d):
+    phr = d["phrase"]["kanji"]
+    phr_kana = d["phrase"]["kana"]
+    phr_eng =  d["phrase"]["meaning"]
+    print(f'{d["rk2"]:<2} {d["unicode"]} {d["meaning"]:12} {d["on"]}  {phr:<6} {phr_kana:6} {phr_eng}')
 
+    
 def dump_csv():
     data = load_data()
     for d in data:
-        phr = d["exemplary_phrase"]["phrase"]
-        phr_kana = d["exemplary_phrase"]["kana"]
-        phr_eng =  d["exemplary_phrase"]["meaning"]
-        print(f'{d["rk2"]:<2} {d["unicode"]} {d["meaning"]:12} {d["on"]}  {phr:<6} {phr_kana:6} {phr_eng}')
+        dump_entry(d)
 
 
 def dump():
@@ -107,6 +128,40 @@ def rtk1():
         else:
             cprint("fail", "red", attrs=["bold"])
 
+def add():
+    data = load_data()
+    instr2 = 'correct? <y/n>'
+
+    while True:
+        entry = {}
+
+        index = len(data)
+        print(f'R-{index}')
+        entry["rk2"] = index
+
+        entry["unicode"] = decode(input("Unicode: "))
+        entry["meaning"] = input("Meaning: ")
+        entry["strokes"] = input("Strokes: ")
+        entry["on"] = input("on: ")
+        entry["rk1"] = input("rk1: ")
+        entry["phrase"] = {}
+        entry["phrase"]["kanji"] = decode_phrase(input("Phrase kanji: "))
+        entry["phrase"]["kana"] = input("Phrase kana: ")
+        entry["phrase"]["meaning"] = input("Phrase meaning: ")
+        dump_entry(entry)
+
+        ok = prompt(f'{colored(instr2, "yellow")}')
+        backspace(instr2)
+        if ok == 'y':
+            cprint("Added", "green", attrs=["bold"])
+            data.append(entry)
+        else:
+            cprint("Discarded", "red", attrs=["bold"])
+    
+    
+    
+
+            
 if __name__ == "__main__":
     pars = argparse.ArgumentParser(description="Kanji Tools")
     subp = pars.add_subparsers(help="Commands", required=True)
@@ -116,6 +171,9 @@ if __name__ == "__main__":
 
     cmdp = subp.add_parser('rtk1', help="Drill Remembering the Kanji I")
     cmdp.set_defaults(func=rtk1)
+
+    cmdp = subp.add_parser('add', help="Add more kanji")
+    cmdp.set_defaults(func=add)
     
     args = pars.parse_args()
     args.func()
