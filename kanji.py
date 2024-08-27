@@ -17,6 +17,21 @@ ROMA2KATA = {
     'ri': '30ea',
 }
 
+ROMA2HIRA = {
+    'a':  '3042', 'i': '3044', 'u': '3046', 'e': '3048', 'o': '304A',
+    'ka': '304B', 'ga': '304C', 'ki': '304D', 'gi': '304E', 'ku': '304F', 'gu': '3050',
+    'ke': '3051', 'ge': '3052', 'ko': '3053', 'go': '3054', 'sa': '3055', 'za': '3056', 'shi': '3057', 'ji': '3058',
+    'su': '3059', 'zu': '305A', 'se': '305B', 'ze': '305C', 'so': '305D', 'zo': '305E', 'ta': '305F', 'ta': '3060',
+    'chi': '3061', 'tsu': '3064', 'dzu': '3065', 'te': '3066', 'de': '3067', 'to': '3068',
+    'do': '3069', 'na': '306A', 'ni': '306B', 'nu': '306C', 'ne': '306D', 'no': '306E', 'ha': '306F', 'ba': '3070',
+    'po': '3071', 'hi': '3072', 'bi': '3073', 'pi': '3074', 'fu': '3075', 'bu': '3076', 'pu': '3077', 'he': '3078',
+    'be': '3079', 'po': '307A', 'ha': '307B', 'ba': '307C', 'pa': '307D', 'ma': '307E', 'mi': '307F', 'mu': '3080',
+    'me': '3081', 'mo': '3082', 'ya': '3084', 'yu': '3086', 'yo': '3088',
+    'ra': '3089', 'ri': '308A', 'ru': '308B', 're': '308C', 'ro': '308D', 'wa': '308F', 
+    'wo': '3092', 'n': '3093',
+    'sho': ('3057', '3087'),
+}
+
 def print_range(title, start, end):
     columns = 8
     index = start
@@ -43,6 +58,27 @@ def roma2kata(s):
     return decode(ROMA2KATA[s])
 
 
+def roma2hira(phr):
+    s = ""
+    res = []
+    for c in phr:
+        s += c
+        if s in ROMA2HIRA:
+            # Try to handle 'ni' vs 'n'
+            if s == 'n' and not res:
+                continue
+            try:
+                res.append(decode(ROMA2HIRA[s]))
+            except TypeError:
+                hira = ROMA2HIRA[s]
+                for h in hira:
+                    res.append(decode(h))
+            s = ""
+    if s:
+        raise Exception(f'{s} is not hiragana')
+    return "".join(res)
+
+
 def load_data():
     data = []
     with open("kanji.csv") as f:
@@ -53,7 +89,7 @@ def load_data():
             unic = decode(unic)
             on = roma2kata(on)
             phr = decode_phrase(phr)
-            phr_kana = decode_phrase(phr_kana)
+            phr_kana = roma2hira(phr_kana)
             data.append({
                 "rk2": rk2,
                 "unicode": unic,
@@ -74,7 +110,10 @@ def dump_entry(d):
     phr = d["phrase"]["kanji"]
     phr_kana = d["phrase"]["kana"]
     phr_eng =  d["phrase"]["meaning"]
-    print(f'{d["rk2"]:<2} {d["unicode"]} {d["meaning"]:12} {d["on"]}  {phr:<6} {phr_kana:6} {phr_eng}')
+    try:
+        print(f'{d["rk2"]:<2} {d["unicode"]} {d["meaning"]:12} {d["on"]}  {phr:<6} {phr_kana:6} {phr_eng}')
+    except:
+        print(d)
 
     
 def dump_csv():
