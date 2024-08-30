@@ -207,9 +207,9 @@ def roma2hira(phr):
     return "".join(res)
 
 
-def load_cards():
+def load_cards(filename):
     data = {}
-    with open("kanji.csv") as f:
+    with open(filename) as f:
         r = csv.reader(f)
         header = next(r)
         for line in r:
@@ -244,8 +244,8 @@ def dump_entry(d):
         print(d)
 
     
-def dump_csv():
-    data = load_cards()
+def dump_csv(filename):
+    data = load_cards(filename)
     for d in data.values():
         dump_entry(d)
 
@@ -253,7 +253,7 @@ def dump_csv():
 def dump(args):
     print_range("---hiragana---", 0x3041, 0x3096)
     print_range("---katakana---", 0x30a1, 0x30fa)
-    dump_csv()
+    dump_csv(args.kanji)
 
 
 def getch():
@@ -321,7 +321,7 @@ def save_session(session, filename):
 
 
 def review(args):
-    cards = load_cards()
+    cards = load_cards(args.kanji)
     session = load_session(args.record)
     
     # Add any new cards added since the last session.
@@ -336,6 +336,7 @@ def review(args):
 
 if __name__ == "__main__":
     pars = argparse.ArgumentParser(description="Kanji Tools")
+    pars.add_argument('-k', '--kanji', help="Kanji CSV file to load", default="kanji.csv")
     subp = pars.add_subparsers(help="Commands", required=True)
 
     cmdp = subp.add_parser('dump', help="Dump kana and known kanji")
