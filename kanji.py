@@ -360,26 +360,42 @@ def review(args):
     save_session(session, args.record)
 
 
+def stats(args):
+    cards = load_cards(args.kanji)
+    session = load_session(args.record)
+    for k, r in session.items():
+        #import pdb; pdb.set_trace()
+        print(f'{cards[k]["unicode"]} {r.meaning2kanji.streak} {r.meaning2kanji.last} {r.phrase2on.streak} {r.phrase2on.last}')
+    
+    
 def roma(args):
     kana, codes = roma2hira(args.hira, return_codes=True)
     print(f'{kana} {",".join(codes)}')
 
+
 if __name__ == "__main__":
     pars = argparse.ArgumentParser(description="Kanji Tools")
     pars.add_argument('-k', '--kanji', help="Kanji CSV file to load", default="kanji.csv")
-    subp = pars.add_subparsers(help="Commands", required=True)
+    pars.add_argument('-r', '--record',  help="Record file for tracking history", default="review.json")
 
+    subp = pars.add_subparsers(help="Commands", required=True)
+    
     cmdp = subp.add_parser('dump', help="Dump kana and known kanji")
     cmdp.set_defaults(func=dump)
 
+    cmdp = subp.add_parser('stats', help="Show drill stats")
+    cmdp.set_defaults(func=stats)
+    
     cmdp = subp.add_parser('review', help="Drill Remembering the Kanji I")
     cmdp.add_argument('-d', '--drillname', choices=('m2k', 'p2o'), default='m2k')
-    cmdp.add_argument('-r', '--record',  help="Record file for tracking history", default="review.json")
+
     cmdp.set_defaults(func=review)
 
     cmdp = subp.add_parser('roma', help="Convert romaji to hiragana")
     cmdp.add_argument('hira')
     cmdp.set_defaults(func=roma)
+
+    
     
     args = pars.parse_args()
     args.func(args)
