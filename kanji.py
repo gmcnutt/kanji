@@ -31,10 +31,10 @@ ROMA2HIRA = {
     'do': '3069', 'na': '306A', 'ni': '306B', 'nu': '306C', 'ne': '306D', 'no': '306E', 'ha': '306F', 'ba': '3070',
     'pa': '3071', 'hi': '3072', 'bi': '3073', 'pi': '3074', 'fu': '3075', 'bu': '3076', 'pu': '3077', 'he': '3078',
     'be': '3079', 'po': '307A', 'ho': '307B', 'bo': '307C', 'po': '307D', 'ma': '307E', 'mi': '307F', 'mu': '3080',
-    'me': '3081', 'mo': '3082', 'ya': '3084', 'yu': '3086', 'yo': '3088',
+    'me': '3081', 'mo': '3082', 'ya': '3084', '_yu': '3085', 'yu': '3086', '_yo': '3087', 'yo': '3088',
     'ra': '3089', 'ri': '308A', 'ru': '308B', 're': '308C', 'ro': '308D', 'wa': '308F', 
     'wo': '3092', 'n': '3093',
-    'sho': ('3057', '3087'), 'jo': ('3058', '3087'),
+    'sho': ('3057', '3087'), 'jo': ('3058', '3087'), 'byo': ('3073', '3087'), 'nyu': ('306b', '3085')
 }
 
 # Set up some JSON-serializable data structures to track drill results.
@@ -193,7 +193,7 @@ def roma2hira(phr, return_codes=False):
     for c in phr:
         s += c
         if s in ROMA2HIRA:
-            # Try to handle 'ni' vs 'n'
+            # If we hit 'n', keep going. unless it is the last character.
             if s == 'n' and not res:
                 continue
             try:
