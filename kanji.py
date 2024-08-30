@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 import argparse
 import csv
-from datetime import datetime, timedelta
 import json
 import sys, tty, termios
+from collections import namedtuple
+from datetime import datetime, timedelta
 from termcolor import colored, cprint
 
 
@@ -35,6 +36,124 @@ ROMA2HIRA = {
     'wo': '3092', 'n': '3093',
     'sho': ('3057', '3087'), 'jo': ('3058', '3087'),
 }
+
+# Set up some JSON-serializable data structures to track drill results.
+TODAY = datetime.today()
+FMT = '%Y-%m-%d'
+TODAYSTR = TODAY.strftime(FMT)
+
+
+class DrillRecord(object):
+
+    def __init__(self, streak=0, last=TODAYSTR):
+        self.streak = streak
+        self.last = last
+
+    def save(self):
+        return (self.streak, self.last)
+
+    @classmethod
+    def load(klass, v):
+        return DrillRecord(*v)
+
+
+class CardRecord(object):
+
+    def __init__(self, m2k=None, p2o=None):
+        self.meaning2kanji=m2k or DrillRecord()
+        self.phrase2on = p2o or DrillRecord()
+
+    def save(self):
+        return [self.meaning2kanji.save(), self.phrase2on.save()]
+
+    @classmethod
+    def load(klass, v):
+        return klass(DrillRecord.load(v[0]), DrillRecord.load(v[1]))
+
+
+class Drill(object):
+
+    def run(self, cards, session):
+        
+        # Count cards due for review. If a card has passed N times, it is
+        # due N days from the last day it passed.
+        due = []
+        for k, r in session.items():
+            dr = getattr(r, self.name)
+            age = TODAY - datetime.strptime(dr.last, FMT)
+            if age.days >= dr.streak:
+                due.append((k, dr))
+
+        if not due:
+            cprint(f'{colored("Nothing due", "green")}')
+            return
+        
+        cprint(f'Reviewing ({len(due)} cards)', "yellow")
+        cprint(self.instructions, "yellow")
+
+        # Review the cards, remembering the fails.
+        fails = []
+        for k, dr in due:
+            if self.review(cards[k]):
+                dr.streak += 1
+                cprint(f"ok {dr.streak}x", "green", attrs=["bold"])
+            else:
+                dr.streak = 0
+                cprint("fail", "red", attrs=["bold"])
+                fails.append(cards[k])
+            dr.last = TODAYSTR
+
+        # Save results.
+        for k, cr in session.items():
+            session[k] = cr.save()
+        with open('review.json', 'w') as f:
+            json.dump(session, f)
+
+        # Review failures.
+        while fails:
+            cprint("Reviewing failures ({len(fails)} cards)", "yellow")
+            refails = []
+            for card in fails:
+                if not self.review(card):
+                    refails.append(card)
+                print()
+            fails = refails
+        
+
+class Meaning2KanjiDrill(Drill):
+
+    name = 'meaning2kanji'
+    instructions = 'Given the meaning, write the kanji'
+
+    def review(self, card):
+        instr1 = '<Press any key to check>'
+        instr2 = 'correct? <y/n>'
+        prompt(f'{colored(card["meaning"], attrs=["bold"]):16} {colored(instr1, "yellow")}')
+        backspace(instr1)
+        ok = prompt(f' {colored(card["unicode"], "cyan", attrs=["bold"])} {colored(instr2, "yellow")}')
+        backspace(instr2)
+        return ok == 'y'
+
+
+class Phrase2OnDrill(Drill):
+
+    name = 'phrase2on'
+    instructions = 'Given the kanji and exemplary phrase, type the romaji for the on reading'
+    
+    def review(self, card):
+        promptstr = f'{colored(card["unicode"], "cyan", attrs=["bold"])} in {colored(card["phrase"]["kanji"], "cyan")}? '
+        r = input(promptstr)
+        backup = f'\033[{16+len(r)}C\033[1A'
+        sys.stdout.write(backup)
+        on = roma2kata(r)
+        return on == card["on"]
+
+
+DRILL_CLASSES = {
+    'p2o': Phrase2OnDrill,
+    'm2k': Meaning2KanjiDrill
+}
+
 
 def print_range(title, start, end):
     columns = 8
@@ -165,7 +284,6 @@ def review_card(card):
     ok = prompt(f' {colored(card["unicode"], "cyan", attrs=["bold"])} {colored(instr2, "yellow")}')
     backspace(instr2)
     if ok != 'y':
-        cprint("fail", "red", attrs=["bold"])
         return False
     
     prompt(f'{colored(instr3, "yellow")}')
@@ -173,40 +291,33 @@ def review_card(card):
     ok = prompt(f' {colored(card["on"], "cyan", attrs=["bold"])} {colored(instr2, "yellow")}')
     backspace(instr2)
     if ok != 'y':
-        cprint("fail", "red", attrs=["bold"])
         return False
-    cprint("ok ", "green", attrs=["bold"])
     return True
 
-
-def review(args):
-    FMT = '%Y-%m-%d'
-    cards = load_cards()    
+def load_session():
+    # Load past session. A session is a dict where the keys are
+    # indices into the 'cards' array and the values are CardRecords.
     try:
         with open('review.json') as f:
             session = json.load(f)
     except:
         session = {}
-    today = datetime.today()
+    for k, v in session.items():
+        session[k] = CardRecord.load(v)
+    return session
 
-    # Add new cards
+
+def review(args):
+    cards = load_cards()
+    session = load_session()
+    
+    # Add any new cards added since the last session.
     for k in cards.keys():
         if k not in session:
-            session[k] = [0, today.strftime(FMT)]
+            session[k] = CardRecord()
 
-    # Prompt for due cards
-    for k, r in session.items():
-        age = today - datetime.strptime(r[1], FMT)
-        if age.days >= r[0]:
-            if review_card(cards[k]):
-                r[0] += 1
-            else:
-                r[0] = 0
-            r[1] = today.strftime(FMT)
-
-    # Save results
-    with open('review.json', 'w') as f:
-        json.dump(session, f)
+    drill = DRILL_CLASSES[args.drillname]()
+    drill.run(cards, session)    
 
 
 if __name__ == "__main__":
@@ -217,6 +328,7 @@ if __name__ == "__main__":
     cmdp.set_defaults(func=dump)
 
     cmdp = subp.add_parser('review', help="Drill Remembering the Kanji I")
+    cmdp.add_argument('-d', '--drillname', choices=('m2k', 'p2o'), default='m2k')
     cmdp.set_defaults(func=review)
 
     args = pars.parse_args()
