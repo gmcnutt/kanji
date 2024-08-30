@@ -190,12 +190,24 @@ def roma2hira(phr, return_codes=False):
     s = ""
     res = []
     codes = []
+    saw_n = False  # 'n' requires special handling
     for c in phr:
+        if saw_n:
+            if c not in 'aeiouy':
+                # Must have been terminal 'n'
+                code = ROMA2HIRA[s]
+                res.append(decode(code))
+                codes.append(code)
+                s = ""
+                saw_n = False
+
         s += c
         if s in ROMA2HIRA:
-            # If we hit 'n', keep going. unless it is the last character.
-            if s == 'n' and not res:
+            # Try to handle 'ni' vs 'n'
+            if s == 'n':
+                saw_n = True
                 continue
+            saw_n = False
             try:
                 code = ROMA2HIRA[s]
                 res.append(decode(code))
@@ -207,7 +219,13 @@ def roma2hira(phr, return_codes=False):
                     codes.append(h)
             s = ""
     if s:
-        raise Exception(f'{s} is not hiragana')
+        if saw_n:
+            # Must have been terminal 'n' at the end
+            code = ROMA2HIRA[s]
+            res.append(decode(code))
+            codes.append(code)
+        else:
+            raise Exception(f'{s} is not hiragana')
     hira = "".join(res)
     if return_codes:
         return hira, codes
