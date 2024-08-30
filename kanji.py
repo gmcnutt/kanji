@@ -143,11 +143,22 @@ class Phrase2OnDrill(Drill):
     def review(self, card):
         promptstr = f'{colored(card["unicode"], "cyan", attrs=["bold"])} in {colored(card["phrase"]["kanji"], "cyan")}? '
         r = input(promptstr)
-        backup = f'\033[{16+len(r)}C\033[1A'
+        #backup = f'\033[{16+len(r)}C\033[1A'
+        backup = f'\033[1A'
         sys.stdout.write(backup)
-        on = roma2kata(r)
-        return on == card["on"]
-
+        print(f'{promptstr}\b\b ', end='')
+        if r:
+            on = roma2kata(r)
+        else:
+            on = '?'
+        ok = on == card["on"]
+        if ok:
+            cprint(f'{on} ', "green", end='')
+        else:
+            print(f'{colored(on, "red")} should be {card["on"]} ', end='')
+        print(f'in {colored(card["phrase"]["kana"], "light_grey")} ({card["phrase"]["meaning"]}) ', end='')            
+        return ok
+    
 
 DRILL_CLASSES = {
     'p2o': Phrase2OnDrill,
