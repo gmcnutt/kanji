@@ -103,12 +103,6 @@ class Drill(object):
                 fails.append(cards[k])
             dr.last = TODAYSTR
 
-        # Save results.
-        for k, cr in session.items():
-            session[k] = cr.save()
-        with open('review.json', 'w') as f:
-            json.dump(session, f)
-
         # Review failures.
         while fails:
             cprint("Reviewing failures ({len(fails)} cards)", "yellow")
@@ -305,11 +299,11 @@ def review_card(card):
         return False
     return True
 
-def load_session():
+def load_session(filename):
     # Load past session. A session is a dict where the keys are
     # indices into the 'cards' array and the values are CardRecords.
     try:
-        with open('review.json') as f:
+        with open(filename) as f:
             session = json.load(f)
     except:
         session = {}
@@ -318,9 +312,17 @@ def load_session():
     return session
 
 
+def save_session(session, filename):
+    # Save results.
+    for k, cr in session.items():
+        session[k] = cr.save()
+    with open(filename, 'w') as f:
+        json.dump(session, f)
+
+
 def review(args):
     cards = load_cards()
-    session = load_session()
+    session = load_session(args.record)
     
     # Add any new cards added since the last session.
     for k in cards.keys():
@@ -328,7 +330,8 @@ def review(args):
             session[k] = CardRecord()
 
     drill = DRILL_CLASSES[args.drillname]()
-    drill.run(cards, session)    
+    drill.run(cards, session)
+    save_session(session, args.record)
 
 
 if __name__ == "__main__":
@@ -340,6 +343,7 @@ if __name__ == "__main__":
 
     cmdp = subp.add_parser('review', help="Drill Remembering the Kanji I")
     cmdp.add_argument('-d', '--drillname', choices=('m2k', 'p2o'), default='m2k')
+    cmdp.add_argument('-r', '--record',  help="Record file for tracking history", default="review.json")
     cmdp.set_defaults(func=review)
 
     args = pars.parse_args()
