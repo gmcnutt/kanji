@@ -26,7 +26,7 @@ ROMA2HIRA = {
     'a':  '3042', 'i': '3044', 'u': '3046', 'e': '3048', 'o': '304A',
     'ka': '304B', 'ga': '304C', 'ki': '304D', 'gi': '304E', 'ku': '304F', 'gu': '3050',
     'ke': '3051', 'ge': '3052', 'ko': '3053', 'go': '3054', 'sa': '3055', 'za': '3056', 'shi': '3057', 'ji': '3058',
-    'su': '3059', 'zu': '305A', 'se': '305B', 'ze': '305C', 'so': '305D', 'zo': '305E', 'ta': '305F', 'ta': '3060',
+    'su': '3059', 'zu': '305A', 'se': '305B', 'ze': '305C', 'so': '305D', 'zo': '305E', 'ta': '305F', 'da': '3060',
     'chi': '3061', 'tsu': '3064', 'dzu': '3065', 'te': '3066', 'de': '3067', 'to': '3068',
     'do': '3069', 'na': '306A', 'ni': '306B', 'nu': '306C', 'ne': '306D', 'no': '306E', 'ha': '306F', 'ba': '3070',
     'pa': '3071', 'hi': '3072', 'bi': '3073', 'pi': '3074', 'fu': '3075', 'bu': '3076', 'pu': '3077', 'he': '3078',
@@ -186,9 +186,10 @@ def roma2kata(s):
     return decode(ROMA2KATA[s])
 
 
-def roma2hira(phr):
+def roma2hira(phr, return_codes=False):
     s = ""
     res = []
+    codes = []
     for c in phr:
         s += c
         if s in ROMA2HIRA:
@@ -196,15 +197,22 @@ def roma2hira(phr):
             if s == 'n' and not res:
                 continue
             try:
-                res.append(decode(ROMA2HIRA[s]))
+                code = ROMA2HIRA[s]
+                res.append(decode(code))
+                codes.append(code)
             except TypeError:
                 hira = ROMA2HIRA[s]
                 for h in hira:
                     res.append(decode(h))
+                    codes.append(h)
             s = ""
     if s:
         raise Exception(f'{s} is not hiragana')
-    return "".join(res)
+    hira = "".join(res)
+    if return_codes:
+        return hira, codes
+    else:
+        return hira
 
 
 def load_cards(filename):
@@ -334,6 +342,10 @@ def review(args):
     save_session(session, args.record)
 
 
+def roma(args):
+    kana, codes = roma2hira(args.hira, return_codes=True)
+    print(f'{kana} {",".join(codes)}')
+
 if __name__ == "__main__":
     pars = argparse.ArgumentParser(description="Kanji Tools")
     pars.add_argument('-k', '--kanji', help="Kanji CSV file to load", default="kanji.csv")
@@ -347,5 +359,9 @@ if __name__ == "__main__":
     cmdp.add_argument('-r', '--record',  help="Record file for tracking history", default="review.json")
     cmdp.set_defaults(func=review)
 
+    cmdp = subp.add_parser('roma', help="Convert romaji to hiragana")
+    cmdp.add_argument('hira')
+    cmdp.set_defaults(func=roma)
+    
     args = pars.parse_args()
     args.func(args)
