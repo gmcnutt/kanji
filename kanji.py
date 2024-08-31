@@ -370,8 +370,13 @@ def stats(args):
     cards = load_cards(args.kanji)
     session = load_session(args.record)
     for k, r in session.items():
-        #import pdb; pdb.set_trace()
-        print(f'{cards[k]["unicode"]} {r.meaning2kanji.streak} {r.meaning2kanji.last} {r.phrase2on.streak} {r.phrase2on.last}')
+        if r.meaning2kanji.streak and r.phrase2on.streak:
+            color = "green"
+        elif r.meaning2kanji.streak or r.phrase2on.streak:
+            color = "yellow"
+        else:
+            color = "red"
+        cprint(f'{cards[k]["unicode"]} {r.meaning2kanji.streak} {r.meaning2kanji.last} {r.phrase2on.streak} {r.phrase2on.last} {cards[k]["on"]}', color)
     
     
 def roma(args):
