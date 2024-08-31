@@ -2,6 +2,7 @@
 import argparse
 import csv
 import json
+import random
 import sys, tty, termios
 from collections import namedtuple
 from datetime import datetime, timedelta
@@ -88,11 +89,14 @@ class Drill(object):
         if not due:
             cprint(f'{colored("Nothing due", "green")}')
             return
-        
+
         cprint(f'Reviewing ({len(due)} cards)', "yellow")
         cprint(self.instructions, "yellow")
 
-        # Review the cards, remembering the fails.
+
+        # Review the cards in random order, remembering the fails for
+        # review below.
+        random.shuffle(due)
         fails = []
         for k, dr in due:
             if self.review(cards[k]):
