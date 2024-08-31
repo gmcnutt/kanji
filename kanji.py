@@ -34,7 +34,8 @@ ROMA2HIRA = {
     'me': '3081', 'mo': '3082', 'ya': '3084', '_yu': '3085', 'yu': '3086', '_yo': '3087', 'yo': '3088',
     'ra': '3089', 'ri': '308A', 'ru': '308B', 're': '308C', 'ro': '308D', 'wa': '308F', 
     'wo': '3092', 'n': '3093',
-    'sho': ('3057', '3087'), 'jo': ('3058', '3087'), 'byo': ('3073', '3087'), 'nyu': ('306b', '3085')
+    'sho': ('shi', '_yo'), 'jo': ('ji', '_yo'), 'byo': ('bi', '_yo'), 'nyu': ('ni', '_yu'),
+    'chu': ('chi', '_yu'),
 }
 
 # Set up some JSON-serializable data structures to track drill results.
@@ -215,8 +216,9 @@ def roma2hira(phr, return_codes=False):
             except TypeError:
                 hira = ROMA2HIRA[s]
                 for h in hira:
-                    res.append(decode(h))
-                    codes.append(h)
+                    code = ROMA2HIRA[h]
+                    res.append(decode(code))
+                    codes.append(code)
             s = ""
     if s:
         if saw_n:
