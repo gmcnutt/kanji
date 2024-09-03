@@ -45,6 +45,10 @@ TODAY = datetime.today()
 FMT = '%Y-%m-%d'
 TODAYSTR = TODAY.strftime(FMT)
 
+class NotHiraganaError(Exception):
+
+    pass
+
 
 class DrillRecord(object):
 
@@ -150,7 +154,7 @@ class Phrase2OnDrill(Drill):
         if r:
             try:
                 on = roma2kata(r)
-            except KeyError:
+            except (KeyError, NotHiraganaError):
                 on = '<invalid>'
         else:
             on = '?'
@@ -231,7 +235,7 @@ def convert_roma(phr, code_table, return_codes=False):
             res.append(decode(code))
             codes.append(code)
         else:
-            raise Exception(f'{s} is not hiragana')
+            raise NotHiragana(f'{s} is not hiragana')
     hira = "".join(res)
     if return_codes:
         return hira, codes
