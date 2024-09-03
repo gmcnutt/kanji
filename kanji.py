@@ -147,7 +147,10 @@ class Phrase2OnDrill(Drill):
         sys.stdout.write(backup)
         print(f'{promptstr}\b\b ', end='')
         if r:
-            on = roma2kata(r)
+            try:
+                on = roma2kata(r)
+            except KeyError:
+                on = '<invalid>'
         else:
             on = '?'
         ok = on == card["on"]
