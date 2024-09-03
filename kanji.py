@@ -21,6 +21,7 @@ ROMA2KATA = {
     'me': '30E1','mo': '30E2','_ya': '30E3','ya': '30E4','_yu': '30E5','yu': '30E6','_yo': '30E7','yo': '30E8',
     'ra': '30E9','ri': '30EA','ru': '30EB','re': '30EC','ro': '30ED','_wa': '30EE','wa': '30EF', 
     'wo': '30F2',
+    'sho': ('shi', '_yo')
 }
 
 ROMA2HIRA = {
@@ -190,11 +191,7 @@ def decode_phrase(phr):
     return "".join(decode(c) for c in phr.split(","))
 
 
-def roma2kata(s):
-    return decode(ROMA2KATA[s])
-
-
-def roma2hira(phr, return_codes=False):
+def convert_roma(phr, code_table, return_codes=False):
     s = ""
     res = []
     codes = []
@@ -203,34 +200,34 @@ def roma2hira(phr, return_codes=False):
         if saw_n:
             if c not in 'aeiouy':
                 # Must have been terminal 'n'
-                code = ROMA2HIRA[s]
+                code = code_table[s]
                 res.append(decode(code))
                 codes.append(code)
                 s = ""
                 saw_n = False
 
         s += c
-        if s in ROMA2HIRA:
+        if s in code_table:
             # Try to handle 'ni' vs 'n'
             if s == 'n':
                 saw_n = True
                 continue
             saw_n = False
             try:
-                code = ROMA2HIRA[s]
+                code = code_table[s]
                 res.append(decode(code))
                 codes.append(code)
             except TypeError:
-                hira = ROMA2HIRA[s]
+                hira = code_table[s]
                 for h in hira:
-                    code = ROMA2HIRA[h]
+                    code = code_table[h]
                     res.append(decode(code))
                     codes.append(code)
             s = ""
     if s:
         if saw_n:
             # Must have been terminal 'n' at the end
-            code = ROMA2HIRA[s]
+            code = code_table[s]
             res.append(decode(code))
             codes.append(code)
         else:
@@ -240,6 +237,14 @@ def roma2hira(phr, return_codes=False):
         return hira, codes
     else:
         return hira
+
+
+def roma2kata(s):
+    return convert_roma(s, ROMA2KATA)
+
+
+def roma2hira(phr, **kwargs):
+    return convert_roma(phr, ROMA2HIRA, **kwargs)
 
 
 def load_cards(filename):
