@@ -115,7 +115,7 @@ class Drill(object):
 
         # Review failures.
         while fails:
-            cprint("Reviewing failures ({len(fails)} cards)", "yellow")
+            cprint(f"Reviewing failures ({len(fails)} cards)", "yellow")
             refails = []
             for card in fails:
                 if not self.review(card):
