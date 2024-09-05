@@ -20,7 +20,7 @@ ROMA2KATA = {
     'be': '30D9','pe': '30DA','ho': '30DB','bo': '30DC','po': '30DD','ma': '30DE','mi': '30DF','mu': '30E0',
     'me': '30E1','mo': '30E2','_ya': '30E3','ya': '30E4','_yu': '30E5','yu': '30E6','_yo': '30E7','yo': '30E8',
     'ra': '30E9','ri': '30EA','ru': '30EB','re': '30EC','ro': '30ED','_wa': '30EE','wa': '30EF', 
-    'wo': '30F2',
+    'wo': '30F2', 'n': '30F3',
     'sho': ('shi', '_yo')
 }
 
@@ -235,7 +235,7 @@ def convert_roma(phr, code_table, return_codes=False):
             res.append(decode(code))
             codes.append(code)
         else:
-            raise NotHiragana(f'{s} is not hiragana')
+            raise NotHiraganaError(f'{s} is not hiragana')
     hira = "".join(res)
     if return_codes:
         return hira, codes
