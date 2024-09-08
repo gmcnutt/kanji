@@ -21,7 +21,8 @@ ROMA2KATA = {
     'me': '30E1','mo': '30E2','_ya': '30E3','ya': '30E4','_yu': '30E5','yu': '30E6','_yo': '30E7','yo': '30E8',
     'ra': '30E9','ri': '30EA','ru': '30EB','re': '30EC','ro': '30ED','_wa': '30EE','wa': '30EF', 
     'wo': '30F2', 'n': '30F3',
-    'sho': ('shi', '_yo')
+    'sho': ('shi', '_yo'),
+    'chu': ('chi', '_yu')
 }
 
 ROMA2HIRA = {
@@ -45,7 +46,7 @@ TODAY = datetime.today()
 FMT = '%Y-%m-%d'
 TODAYSTR = TODAY.strftime(FMT)
 
-class NotHiraganaError(Exception):
+class NotKanaError(Exception):
 
     pass
 
@@ -113,6 +114,8 @@ class Drill(object):
                 fails.append(cards[k])
             dr.last = TODAYSTR
 
+        cprint(f'You passed {len(due)-len(fails)}/{len(due)} cards', "green")
+            
         # Review failures.
         while fails:
             cprint(f"Reviewing failures ({len(fails)} cards)", "yellow")
@@ -154,7 +157,7 @@ class Phrase2OnDrill(Drill):
         if r:
             try:
                 on = roma2kata(r)
-            except (KeyError, NotHiraganaError):
+            except (KeyError, NotKanaError):
                 on = '<invalid>'
         else:
             on = '?'
@@ -235,7 +238,7 @@ def convert_roma(phr, code_table, return_codes=False):
             res.append(decode(code))
             codes.append(code)
         else:
-            raise NotHiraganaError(f'{s} is not hiragana')
+            raise NotKanaError(f'{s} is not kana')
     hira = "".join(res)
     if return_codes:
         return hira, codes
@@ -283,7 +286,7 @@ def dump_entry(d):
     phr_kana = d["phrase"]["kana"]
     phr_eng =  d["phrase"]["meaning"]
     try:
-        print(f'{d["rk2"]:<2} {d["unicode"]} {d["meaning"]:12} {d["on"]}  {phr:<6} {phr_kana:6} {phr_eng}')
+        print(f'{d["rk2"]:<2} {d["unicode"]} {d["meaning"]:12} {d["on"]:<6}  {phr:<6} {phr_kana:6} {phr_eng}')
     except:
         print(d)
 
@@ -396,6 +399,11 @@ def roma(args):
     print(f'{kana} {",".join(codes)}')
 
 
+def kanji2unicode(args):
+    for k in args.kanji:
+        print(f'{k} {hex(ord(k))}')
+
+
 if __name__ == "__main__":
     pars = argparse.ArgumentParser(description="Kanji Tools")
     pars.add_argument('-k', '--kanji', help="Kanji CSV file to load", default="kanji.csv")
@@ -418,7 +426,9 @@ if __name__ == "__main__":
     cmdp.add_argument('hira')
     cmdp.set_defaults(func=roma)
 
-    
+    cmdp = subp.add_parser('uni', help="Show the unicode for a character or list of characters")
+    cmdp.add_argument('kanji')
+    cmdp.set_defaults(func=kanji2unicode)
     
     args = pars.parse_args()
     args.func(args)
