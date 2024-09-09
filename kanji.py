@@ -18,11 +18,15 @@ ROMA2KATA = {
     'do': '30C9','na': '30CA','ni': '30CB','nu': '30CC','ne': '30CD','no': '30CE','ha': '30CF','ba': '30D0',
     'pa': '30D1','hi': '30D2','bi': '30D3','pi': '30D4','fu': '30D5','bu': '30D6','pu': '30D7','he': '30D8',
     'be': '30D9','pe': '30DA','ho': '30DB','bo': '30DC','po': '30DD','ma': '30DE','mi': '30DF','mu': '30E0',
-    'me': '30E1','mo': '30E2','_ya': '30E3','ya': '30E4','_yu': '30E5','yu': '30E6','_yo': '30E7','yo': '30E8',
+    'me': '30E1','mo': '30E2',
+    '_ya': '30E3','ya': '30E4','_yu': '30E5','yu': '30E6','_yo': '30E7','yo': '30E8',
     'ra': '30E9','ri': '30EA','ru': '30EB','re': '30EC','ro': '30ED','_wa': '30EE','wa': '30EF', 
     'wo': '30F2', 'n': '30F3',
+    'sha': ('shi', '_ya'),
+    'shu': ('shi', '_yu'),
     'sho': ('shi', '_yo'),
-    'chu': ('chi', '_yu')
+    'chu': ('chi', '_yu'),
+    'cho': ('chi', '_yo')
 }
 
 ROMA2HIRA = {
@@ -34,11 +38,15 @@ ROMA2HIRA = {
     'do': '3069', 'na': '306A', 'ni': '306B', 'nu': '306C', 'ne': '306D', 'no': '306E', 'ha': '306F', 'ba': '3070',
     'pa': '3071', 'hi': '3072', 'bi': '3073', 'pi': '3074', 'fu': '3075', 'bu': '3076', 'pu': '3077', 'he': '3078',
     'be': '3079', 'po': '307A', 'ho': '307B', 'bo': '307C', 'po': '307D', 'ma': '307E', 'mi': '307F', 'mu': '3080',
-    'me': '3081', 'mo': '3082', 'ya': '3084', '_yu': '3085', 'yu': '3086', '_yo': '3087', 'yo': '3088',
+    'me': '3081', 'mo': '3082',
+    '_ya': '3083', 'ya': '3084', '_yu': '3085', 'yu': '3086', '_yo': '3087', 'yo': '3088',
     'ra': '3089', 'ri': '308A', 'ru': '308B', 're': '308C', 'ro': '308D', 'wa': '308F', 
     'wo': '3092', 'n': '3093',
+    'sha': ('shi', '_ya'),
+    'shu': ('shi', '_yu'),
     'sho': ('shi', '_yo'), 'jo': ('ji', '_yo'), 'byo': ('bi', '_yo'), 'nyu': ('ni', '_yu'),
-    'chu': ('chi', '_yu'), 'kyu': ('ki', '_yu')
+    'chu': ('chi', '_yu'), 'kyu': ('ki', '_yu'),
+    'cho': ('chi', '_yo')    
 }
 
 # Set up some JSON-serializable data structures to track drill results.
@@ -110,7 +118,7 @@ class Drill(object):
                 cprint(f"ok {dr.streak}x", "green", attrs=["bold"])
             else:
                 dr.streak = 0
-                cprint("fail", "red", attrs=["bold"])
+                cprint(f"fail (R-{card['rk2']})", "red", attrs=["bold"])
                 fails.append(cards[k])
             dr.last = TODAYSTR
 
@@ -137,7 +145,7 @@ class Meaning2KanjiDrill(Drill):
         instr2 = 'correct? <y/n>'
         prompt(f'{colored(card["meaning"], attrs=["bold"]):16} {colored(instr1, "yellow")}')
         backspace(instr1)
-        ok = prompt(f' {colored(card["unicode"], "cyan", attrs=["bold"])} {colored(instr2, "yellow")}')
+        ok = prompt(f' {colored(card["unicode"], "cyan", attrs=["bold"])} ({card["strokes"]}) {colored(instr2, "yellow")}')
         backspace(instr2)
         return ok == 'y'
 
