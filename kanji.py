@@ -113,13 +113,14 @@ class Drill(object):
         random.shuffle(due)
         fails = []
         for k, dr in due:
-            if self.review(cards[k]):
+            card = cards[k]
+            if self.review(card):
                 dr.streak += 1
                 cprint(f"ok {dr.streak}x", "green", attrs=["bold"])
             else:
                 dr.streak = 0
                 cprint(f"fail (R-{card['rk2']})", "red", attrs=["bold"])
-                fails.append(cards[k])
+                fails.append(card)
             dr.last = TODAYSTR
 
         cprint(f'You passed {len(due)-len(fails)}/{len(due)} cards', "green")
