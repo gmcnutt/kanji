@@ -75,21 +75,32 @@ class DrillRecord(object):
 
 class CardRecord(object):
 
-    def __init__(self, m2k=None, p2o=None):
+    def __init__(self, m2k=None, p2o=None, k2m=None):
         self.meaning2kanji=m2k or DrillRecord()
         self.phrase2on = p2o or DrillRecord()
+        self.kanji2meaning = k2m or DrillRecord()
 
     def save(self):
-        return [self.meaning2kanji.save(), self.phrase2on.save()]
+        return [
+            self.meaning2kanji.save(),
+            self.phrase2on.save(),
+            self.kanji2meaning.save()
+        ]
 
     @classmethod
     def load(klass, v):
-        return klass(DrillRecord.load(v[0]), DrillRecord.load(v[1]))
+        m2k = DrillRecord.load(v[0])
+        p2o = DrillRecord.load(v[1])
+        if len(v) == 3:
+            k2m = DrillRecord.load(v[2])
+        else:
+            k2m = None
+        return klass(m2k, p2o, k2m)
 
 
 class Drill(object):
 
-    def run(self, cards, session):
+    def run(self, cards, session, limit=None):
         
         # Count cards due for review. If a card has passed N times, it is
         # due N days from the last day it passed.
@@ -104,14 +115,16 @@ class Drill(object):
             cprint(f'{colored("Nothing due", "green")}')
             return
 
-        cprint(f'Reviewing ({len(due)} cards)', "yellow")
-        cprint(self.instructions, "yellow")
-
-
         # Review the cards in random order, remembering the fails for
         # review below.
         random.shuffle(due)
+        available = len(due)
+        if limit:
+            due = due[:limit]
+        cprint(f'Reviewing ({len(due)}/{available} cards)', "yellow")
+        cprint(self.instructions, "yellow")
         fails = []
+
         for k, dr in due:
             card = cards[k]
             if self.review(card):
@@ -151,6 +164,25 @@ class Meaning2KanjiDrill(Drill):
         return ok == 'y'
 
 
+class Kanji2MeaningDrill(Drill):
+
+    name = 'kanji2meaning'
+    instructions = 'Given the kanji, write the meaning'
+
+    def review(self, card):
+        promptstr = f'{colored(card["unicode"], "cyan", attrs=["bold"])}? '
+        r = input(promptstr)
+        
+        backup = f'\033[1A'
+        sys.stdout.write(backup)
+        print(f'{promptstr}{r} ', end='')
+
+        ok = r == card["meaning"]
+        if not ok:
+            print(f'should be {colored(card["meaning"], "red", attrs=["underline"])} ', end='')
+        return ok
+
+
 class Phrase2OnDrill(Drill):
 
     name = 'phrase2on'
@@ -159,7 +191,6 @@ class Phrase2OnDrill(Drill):
     def review(self, card):
         promptstr = f'{colored(card["unicode"], "cyan", attrs=["bold"])} in {colored(card["phrase"]["kanji"], "cyan")}? '
         r = input(promptstr)
-        #backup = f'\033[{16+len(r)}C\033[1A'
         backup = f'\033[1A'
         sys.stdout.write(backup)
         print(f'{promptstr}\b\b ', end='')
@@ -181,7 +212,8 @@ class Phrase2OnDrill(Drill):
 
 DRILL_CLASSES = {
     'p2o': Phrase2OnDrill,
-    'm2k': Meaning2KanjiDrill
+    'm2k': Meaning2KanjiDrill,
+    'k2m': Kanji2MeaningDrill
 }
 
 
@@ -386,7 +418,7 @@ def review(args):
             session[k] = CardRecord()
 
     drill = DRILL_CLASSES[args.drillname]()
-    drill.run(cards, session)
+    drill.run(cards, session, args.limit)
     save_session(session, args.record)
 
 
@@ -427,7 +459,8 @@ if __name__ == "__main__":
     cmdp.set_defaults(func=stats)
     
     cmdp = subp.add_parser('review', help="Drill Remembering the Kanji I")
-    cmdp.add_argument('-d', '--drillname', choices=('m2k', 'p2o'), default='m2k')
+    cmdp.add_argument('-d', '--drillname', choices=('m2k', 'p2o', 'k2m'), default='m2k')
+    cmdp.add_argument('-l', '--limit', type=int, default=None, help='Limit the number of cards to review')
 
     cmdp.set_defaults(func=review)
 
