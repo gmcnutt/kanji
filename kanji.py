@@ -25,6 +25,7 @@ ROMA2KATA = {
     'sha': ('shi', '_ya'),
     'shu': ('shi', '_yu'),
     'sho': ('shi', '_yo'),
+    'jo': ('ji', '_yo'),
     'chu': ('chi', '_yu'),
     'cho': ('chi', '_yo')
 }
@@ -33,9 +34,10 @@ ROMA2HIRA = {
     'a':  '3042', 'i': '3044', 'u': '3046', 'e': '3048', 'o': '304A',
     'ka': '304B', 'ga': '304C', 'ki': '304D', 'gi': '304E', 'ku': '304F', 'gu': '3050',
     'ke': '3051', 'ge': '3052', 'ko': '3053', 'go': '3054', 'sa': '3055', 'za': '3056', 'shi': '3057', 'ji': '3058',
-    'su': '3059', 'zu': '305A', 'se': '305B', 'ze': '305C', 'so': '305D', 'zo': '305E', 'ta': '305F', 'da': '3060',
-    'chi': '3061', 'tsu': '3064', 'dzu': '3065', 'te': '3066', 'de': '3067', 'to': '3068',
-    'do': '3069', 'na': '306A', 'ni': '306B', 'nu': '306C', 'ne': '306D', 'no': '306E', 'ha': '306F', 'ba': '3070',
+    'su': '3059', 'zu': '305A', 'se': '305B', 'ze': '305C', 'so': '305D', 'zo': '305E',
+    'ta': '305F', 'da': '3060', 'chi': '3061', '_tsu': '3063', 'tsu': '3064', 'dzu': '3065', 'te': '3066', 'de': '3067', 'to': '3068',
+    'do': '3069',
+    'na': '306A', 'ni': '306B', 'nu': '306C', 'ne': '306D', 'no': '306E', 'ha': '306F', 'ba': '3070',
     'pa': '3071', 'hi': '3072', 'bi': '3073', 'pi': '3074', 'fu': '3075', 'bu': '3076', 'pu': '3077', 'he': '3078',
     'be': '3079', 'po': '307A', 'ho': '307B', 'bo': '307C', 'po': '307D', 'ma': '307E', 'mi': '307F', 'mu': '3080',
     'me': '3081', 'mo': '3082',
@@ -46,7 +48,8 @@ ROMA2HIRA = {
     'shu': ('shi', '_yu'),
     'sho': ('shi', '_yo'), 'jo': ('ji', '_yo'), 'byo': ('bi', '_yo'), 'nyu': ('ni', '_yu'),
     'chu': ('chi', '_yu'), 'kyu': ('ki', '_yu'),
-    'cho': ('chi', '_yo')    
+    'cho': ('chi', '_yo'),
+    'ppa': ('_tsu', 'pa'), 'ppo': ('_tsu', 'po')
 }
 
 # Set up some JSON-serializable data structures to track drill results.
@@ -327,7 +330,7 @@ def dump_entry(d):
     phr_kana = d["phrase"]["kana"]
     phr_eng =  d["phrase"]["meaning"]
     try:
-        print(f'{d["rk2"]:<2} {d["unicode"]} {d["meaning"]:12} {d["on"]:<6}  {phr:<6} {phr_kana:6} {phr_eng}')
+        print(f'{d["rk2"]:<4} {d["unicode"]} {d["meaning"]:12} {d["on"]:<6}  {phr:<6} {phr_kana:6} {phr_eng}')
     except:
         print(d)
 
