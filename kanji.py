@@ -49,6 +49,7 @@ ROMA2HIRA = {
     'sho': ('shi', '_yo'), 'jo': ('ji', '_yo'), 'byo': ('bi', '_yo'), 'nyu': ('ni', '_yu'),
     'chu': ('chi', '_yu'), 'kyu': ('ki', '_yu'),
     'cho': ('chi', '_yo'),
+    'kka': ('_tsu', 'ka'),
     'ppa': ('_tsu', 'pa'), 'ppo': ('_tsu', 'po')
 }
 
@@ -124,13 +125,14 @@ class Drill(object):
         available = len(due)
         if limit:
             due = due[:limit]
-        cprint(f'Reviewing ({len(due)}/{available} cards)', "yellow")
+        total = len(due)
+        cprint(f'Reviewing ({total}/{available} cards)', "yellow")
         cprint(self.instructions, "yellow")
         fails = []
 
-        for k, dr in due:
+        for i, (k, dr) in enumerate(due):
             card = cards[k]
-            if self.review(card):
+            if self.review(card, i, total):
                 dr.streak += 1
                 cprint(f"ok {dr.streak}x", "green", attrs=["bold"])
             else:
@@ -143,24 +145,25 @@ class Drill(object):
             
         # Review failures.
         while fails:
-            cprint(f"Reviewing failures ({len(fails)} cards)", "yellow")
+            total = len(fails)
+            cprint(f"Reviewing failures ({total} cards)", "yellow")
             refails = []
-            for card in fails:
-                if not self.review(card):
+            for i, card in enumerate(fails):
+                if not self.review(card, i, total):
                     refails.append(card)
                 print()
             fails = refails
-        
+
 
 class Meaning2KanjiDrill(Drill):
 
     name = 'meaning2kanji'
     instructions = 'Given the meaning, write the kanji'
 
-    def review(self, card):
+    def review(self, card, i, total):
         instr1 = '<Press any key to check>'
         instr2 = 'correct? <y/n>'
-        prompt(f'{colored(card["meaning"], attrs=["bold"]):16} {colored(instr1, "yellow")}')
+        prompt(f'{({i}/{total})} {colored(card["meaning"], attrs=["bold"]):16} {colored(instr1, "yellow")}')
         backspace(instr1)
         ok = prompt(f' {colored(card["unicode"], "cyan", attrs=["bold"])} ({card["strokes"]}) {colored(instr2, "yellow")}')
         backspace(instr2)
@@ -172,8 +175,8 @@ class Kanji2MeaningDrill(Drill):
     name = 'kanji2meaning'
     instructions = 'Given the kanji, write the meaning'
 
-    def review(self, card):
-        promptstr = f'{colored(card["unicode"], "cyan", attrs=["bold"])}? '
+    def review(self, card, i, total):
+        promptstr = f'({i}/{total}) {colored(card["unicode"], "cyan", attrs=["bold"])}? '
         r = input(promptstr)
         
         backup = f'\033[1A'
@@ -192,7 +195,7 @@ class Phrase2OnDrill(Drill):
     instructions = 'Given the kanji and exemplary phrase, type the romaji for the on reading'
     
     def review(self, card):
-        promptstr = f'{colored(card["unicode"], "cyan", attrs=["bold"])} in {colored(card["phrase"]["kanji"], "cyan")}? '
+        promptstr = f'({i}/{total}) {colored(card["unicode"], "cyan", attrs=["bold"])} in {colored(card["phrase"]["kanji"], "cyan")}? '
         r = input(promptstr)
         backup = f'\033[1A'
         sys.stdout.write(backup)
