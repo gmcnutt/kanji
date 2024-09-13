@@ -89,7 +89,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 88,8a9e,word,14,go,347,"65e5,672c,8a9e",nihongo,"Japanese language"
 89,767d,white,5,haku,37,"767d,4eba",hakujin,"white people; Caucasians"
 90,6cca,overnight,8,haku,147,"4e00,6cca",ippaku,"a night's stay"
-91,8feb,urge,8,haku,282,"5207,8feb",setsupaku,"to be tense; be imminent"
+91,8feb,urge,8,haku,282,"5207,8feb",seppaku,"to be tense; be imminent"
 92,62cd,clap,8,haku,652,"62cd,624b",hakushu,applause
 93,8236,liner,11,haku,1869,"8236,6765,54c1",hakuraihin,"imported goods"
 94,4f2f,chief,7,haku,967,"4f2f,4ef2",hakuchuu,"to be equal to; be a match for"
@@ -103,3 +103,13 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 102,8b72,defer,20,jou,1528,"8b72,6b69",jouho,"concession; compromise"
 103,58cc,lot,16,jou,1529,"571f,58cc",dojou,"the soil"
 104,91b8,brew,20,jou,1527,"91b8,9020",jouzou,"brewing; distillation"
+105,53ef,can,5,ka,93,"53ef,80fd",kanou,possibility
+106,4f55,what,7,ka,1012,"5e7e,4f55,5b66",kikagaku,geometry
+107,82db,harsh,8,ka,0,"82db,9177",kakoku,"rigor; severity"
+108,8377,baggage,10,ka,1013,"51fa,8377",shukka,"shipping; consignment"
+109,6b4c,song,14,ka,469,"6821,6b4c",kouka,"school song"
+110,6cb3,river,8,ka,146,"6cb3,5ddd",kasen,"rivers; rivers and streams"
+111,5316,change,4,ka,1008,"5316,5b66",kagaku,chemistry
+112,82b1,flower,7,ka,1009,"82b1,58c7",kadan,"flower bed; flower garden"
+113,8ca8,freight,11,ka,1010,"8ca8,7269",kamou,freight
+114,9774,shoes,13,ka,1894,"88fd,9774",seika,shoemaking
