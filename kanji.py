@@ -45,6 +45,7 @@ ROMA2HIRA = {
     '_ya': '3083', 'ya': '3084', '_yu': '3085', 'yu': '3086', '_yo': '3087', 'yo': '3088',
     'ra': '3089', 'ri': '308A', 'ru': '308B', 're': '308C', 'ro': '308D', 'wa': '308F', 
     'wo': '3092', 'n': '3093',
+    'kyo': ('ki', '_yo'),
     'sha': ('shi', '_ya'),
     'shu': ('shi', '_yu'),
     'sho': ('shi', '_yo'), 'jo': ('ji', '_yo'), 'byo': ('bi', '_yo'), 'nyu': ('ni', '_yu'),
@@ -261,7 +262,10 @@ def convert_roma(phr, code_table, return_codes=False):
                 codes.append(code)
                 s = ""
                 saw_n = False
-
+                # My own way to forcibly disambiguate some syllables
+                # that end in 'n'
+                if c == ':':
+                    continue
         s += c
         if s in code_table:
             # Try to handle 'ni' vs 'n'
