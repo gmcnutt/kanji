@@ -26,6 +26,7 @@ ROMA2KATA = {
     'shu': ('shi', '_yu'),
     'sho': ('shi', '_yo'),
     'jo': ('ji', '_yo'),
+    'cha': ('chi', '_ya'),
     'chu': ('chi', '_yu'),
     'cho': ('chi', '_yo')
 }
@@ -47,6 +48,7 @@ ROMA2HIRA = {
     'sha': ('shi', '_ya'),
     'shu': ('shi', '_yu'),
     'sho': ('shi', '_yo'), 'jo': ('ji', '_yo'), 'byo': ('bi', '_yo'), 'nyu': ('ni', '_yu'),
+    'cha': ('chi', '_ya'),
     'chu': ('chi', '_yu'), 'kyu': ('ki', '_yu'),
     'cho': ('chi', '_yo'),
     'kka': ('_tsu', 'ka'),
@@ -163,7 +165,7 @@ class Meaning2KanjiDrill(Drill):
     def review(self, card, i, total):
         instr1 = '<Press any key to check>'
         instr2 = 'correct? <y/n>'
-        prompt(f'{({i}/{total})} {colored(card["meaning"], attrs=["bold"]):16} {colored(instr1, "yellow")}')
+        prompt(f'({i+1}/{total}) {colored(card["meaning"], attrs=["bold"]):16} {colored(instr1, "yellow")}')
         backspace(instr1)
         ok = prompt(f' {colored(card["unicode"], "cyan", attrs=["bold"])} ({card["strokes"]}) {colored(instr2, "yellow")}')
         backspace(instr2)
@@ -176,7 +178,7 @@ class Kanji2MeaningDrill(Drill):
     instructions = 'Given the kanji, write the meaning'
 
     def review(self, card, i, total):
-        promptstr = f'({i}/{total}) {colored(card["unicode"], "cyan", attrs=["bold"])}? '
+        promptstr = f'({i+1}/{total}) {colored(card["unicode"], "cyan", attrs=["bold"])}? '
         r = input(promptstr)
         
         backup = f'\033[1A'
@@ -194,8 +196,8 @@ class Phrase2OnDrill(Drill):
     name = 'phrase2on'
     instructions = 'Given the kanji and exemplary phrase, type the romaji for the on reading'
     
-    def review(self, card):
-        promptstr = f'({i}/{total}) {colored(card["unicode"], "cyan", attrs=["bold"])} in {colored(card["phrase"]["kanji"], "cyan")}? '
+    def review(self, card, i, total):
+        promptstr = f'({i+1}/{total}) {colored(card["unicode"], "cyan", attrs=["bold"])} in {colored(card["phrase"]["kanji"], "cyan")}? '
         r = input(promptstr)
         backup = f'\033[1A'
         sys.stdout.write(backup)
