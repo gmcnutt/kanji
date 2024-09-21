@@ -437,22 +437,62 @@ def review(args):
 
 
 def stats(args):
+    """
+    Print a table. Rows indicate correct writing, columns correct phrasing.
+    """
     cards = load_cards(args.kanji)
     session = load_session(args.record)
+    ROWS = 10
+    COLS = 10
+    table = [[0 for x in range(COLS)] for y in range(ROWS)]
+    writing_sched = [0 for x in range(ROWS)]
+    reading_sched = [0 for x in range(COLS)]
+    endrow = 0
+    endcol = 0
     for k, r in session.items():
-        attrs = []
-        if r.meaning2kanji.streak and r.phrase2on.streak:
-            if r.meaning2kanji.streak >= 5 and r.phrase2on.streak >= 5:
-                color = "green"
-                attrs.append("bold")
-            elif r.meaning2kanji.streak >= 3 and r.phrase2on.streak >= 3:
-                color = "green"
+        writing = r.meaning2kanji
+        row = writing.streak
+        age = TODAY - datetime.strptime(writing.last, FMT)
+        due = writing.streak - age.days
+        writing_sched[due] += 1
+
+        reading = r.phrase2on
+        col = reading.streak
+        age = TODAY - datetime.strptime(reading.last, FMT)
+        due = reading.streak - age.days
+        reading_sched[due] += 1
+        
+        table[row][col] += 1
+        endrow = max(row, endrow)
+        endcol = max(col, endcol)
+
+    endrow += 1
+    endcol += 1
+    print('  | ', end='')
+    for c in range(endcol):
+        print(f'{c:<4} ', end='')
+    print()
+    print('-'*endcol*5)
+    for r in range(endrow):
+        row = table[r]
+        print(f'{r:<2}| ', end='')
+        for c in range(endcol):
+            col = row[c]
+            if col:
+                cprint(f'{col:<4} ', 'green', attrs=['bold'], end='')
             else:
-                color = "yellow"
-        else:
-            color = "red"
-        cprint(f'{cards[k]["unicode"]} {r.meaning2kanji.streak} {r.meaning2kanji.last} {r.phrase2on.streak} {r.phrase2on.last} {cards[k]["on"]}', color, attrs=attrs)
-    
+                cprint(f'{col:<4} ', 'yellow', end='')
+        print()
+
+    print('Writing Due: ', end='')
+    for x in range(ROWS):
+        print(f'{writing_sched[x]} ', end='')
+    print('')
+
+    print('Reading Due: ', end='')
+    for x in range(COLS):
+        print(f'{reading_sched[x]} ', end='')
+    print('')
     
 def roma(args):
     kana, codes = roma2hira(args.hira, return_codes=True)
