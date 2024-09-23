@@ -167,7 +167,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 166,8ce0,compensation,15,bai,476,"8ce0,511f",baishou,"compensation; indemnity"
 167,534a,half,5,han,1286,"534a,5206",hanbun,half
 168,5224,judgment,7,han,1289,"5224,5b9a",hantei,judgment
-169,7554,"patty ridge",10,han,1288,"6e56,7554",kohan,"lakeside; along a lake"
+169,7554,"paddy ridge",10,han,1288,"6e56,7554",kohan,"lakeside; along a lake"
 170,4f34,consort,7,han,1287,"540c,4f34",douhan,"company; companion"
 171,8b1b,lecture,17,kou,1957,"8b1b,7fa9",kougi,lecture
 172,69cb,posture,14,kou,1959,"6a5f,69cb",kikou,"organization; structure"
@@ -194,3 +194,15 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 193,6109,pleasure,12,yu,675,"6109,697d",yuraku,"pleasure; joy"
 194,8aed,rebuke,16,yu,376,"6559,8aed",kyouyu,instructor
 195,7652,healing,18,yu,2193,"7652,7740",yuchaku,"conglutination; healing up"
+196,6731,vermilion,6,shu,235,"6731,7b46",shuhitsu,"red (vermilion) brush"
+197,6b8a,particularly,10,shu,873,"7279,6b8a",tokushu,"special; particular"
+198,73e0,pearl,10,shu,274,"771f,73e0",shinju,pearl
+199,8def,path,13,ro,1376,"9053,8def",douro,road
+200,8cc2,graft,13,ro,313,"8cc4,8cc2",wairo,bribe
+201,9732,dew,21,ro,1377,"9732,9aa8",rokou,"frank; plain"
+202,5e63,cash,15,hei,1118,"7d19,5e63",shihei,"paper money"
+203,853d,"cover over",15,hei,1119,"96a0,853d",inpei,"cover-up"
+204,5f0a,abuse,15,hei,1120,"5f0a,5bb3",heigai,"evil; abuse"
+205,53ca,"reach out",3,kyuu,743,"666e,53ca",fukyuu,dissemination
+206,5438,suck,6,kyuu,744,"5438,53ce",kyuushuu,absorption
+207,7d1a,class,9,kyuu,1453,"9ad8,7d1a",koukyuu,"top grade; high quality"
