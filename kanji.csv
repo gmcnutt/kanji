@@ -39,7 +39,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 38,4e5f,scorpion,3,ya,0,"4e5f,5bf8,5fd7",yasushi,"Yasushi (man's personal name)"
 39,5442,spine,7,ro,24,"98a8,5442",furo,"Japanese bath"
 40,65bc,at,8,o,0,"65bc,3051,308b",okeru,"in; at"
-41,725f,mu,6,mu,0,"725f,7530",muta,"Muta (surname)"
+41,725f,mu,6,mu,2965,"725f,7530",muta,"Muta (surname)"
 42,7962,lingering,9,ne,0,"7962,5b9c",negi,"low-ranking Shinto priest"
 43,4e45,long time,3,ku,1016,"4e45,9060",kuon,"eternity"
 44,4e95,well,4,shou,1806,"4e95,6238",ido,"a well"
@@ -206,3 +206,12 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 205,53ca,"reach out",3,kyuu,743,"666e,53ca",fukyuu,dissemination
 206,5438,suck,6,kyuu,744,"5438,53ce",kyuushuu,absorption
 207,7d1a,class,9,kyuu,1453,"9ad8,7d1a",koukyuu,"top grade; high quality"
+208,77e5,know,8,chi,1308,"77e5,6075",chie,wisdom
+209,75f4,stupid,13,chi,1814,"75f4,6f22",chiken,"molester (of women)"
+210,667a,wisdom,12,chi,1309,"4e0a,667a",jouchi,"supreme wisdom"
+211,5974,guy,5,do,758,"5974,96b7",dorei,slave
+212,6012,angry,9,do,759,"6012,6c17",doki,"anger; indignation"
+213,52aa,toil,7,do,929,"52aa,529b",doryoku,"effort; exertion"
+214,6c38,eternity,5,ei,139,"6c38,9060",eien,eternity
+215,6cf3,swim,8,ei,144,"6c34,6cf3",suiei,swimming
+216,8a60,recitation,12,ei,369,"8a60,6b4c",eika,"composing a song or poem"
