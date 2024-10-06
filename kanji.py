@@ -117,16 +117,20 @@ class CardRecord(object):
 
 class Drill(object):
 
-    def run(self, cards, session, limit=None):
-        
-        # Count cards due for review. If a card has passed N times, it is
-        # due N days from the last day it passed.
+    def get_due(self, session):
         due = []
         for k, r in session.items():
             dr = getattr(r, self.name)
             age = TODAY - datetime.strptime(dr.last, FMT)
             if age.days >= dr.streak:
                 due.append((k, dr))
+        return due
+    
+    def run(self, cards, session, limit=None):
+        
+        # Count cards due for review. If a card has passed N times, it is
+        # due N days from the last day it passed.
+        due = self.get_due(session)
 
         if not due:
             cprint(f'{colored("Nothing due", "green")}')
@@ -422,6 +426,13 @@ def load_session(filename):
     return session
 
 
+def update_session(session, cards):
+    # Add any new cards added since the last session.
+    for k in cards.keys():
+        if k not in session:
+            session[k] = CardRecord()
+    
+
 def save_session(session, filename):
     # Save results.
     for k, cr in session.items():
@@ -433,11 +444,7 @@ def save_session(session, filename):
 def review(args):
     cards = load_cards(args.kanji)
     session = load_session(args.record)
-    
-    # Add any new cards added since the last session.
-    for k in cards.keys():
-        if k not in session:
-            session[k] = CardRecord()
+    update_session(session, cards)
 
     drill = DRILL_CLASSES[args.drillname]()
     drill.run(cards, session, args.limit)
@@ -450,6 +457,7 @@ def stats(args):
     """
     cards = load_cards(args.kanji)
     session = load_session(args.record)
+    update_session(session, cards)
     ROWS = 10
     COLS = 10
     table = [[0 for x in range(COLS)] for y in range(ROWS)]
@@ -457,17 +465,20 @@ def stats(args):
     reading_sched = [0 for x in range(COLS)]
     endrow = 0
     endcol = 0
+
+    drill = Meaning2KanjiDrill()
+    
     for k, r in session.items():
         writing = r.meaning2kanji
         row = writing.streak
         age = TODAY - datetime.strptime(writing.last, FMT)
-        due = writing.streak - age.days
+        due = max(0, writing.streak - age.days)
         writing_sched[due] += 1
 
         reading = r.phrase2on
         col = reading.streak
         age = TODAY - datetime.strptime(reading.last, FMT)
-        due = reading.streak - age.days
+        due = max(0, reading.streak - age.days)
         reading_sched[due] += 1
         
         table[row][col] += 1
