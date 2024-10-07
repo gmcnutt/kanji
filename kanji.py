@@ -458,61 +458,39 @@ def stats(args):
     cards = load_cards(args.kanji)
     session = load_session(args.record)
     update_session(session, cards)
-    ROWS = 10
-    COLS = 10
-    table = [[0 for x in range(COLS)] for y in range(ROWS)]
-    writing_sched = [0 for x in range(ROWS)]
-    reading_sched = [0 for x in range(COLS)]
-    endrow = 0
-    endcol = 0
+    N = 10
+    writing_sched = [0 for x in range(N)]
+    reading_sched = [0 for x in range(N)]
+    meaning_sched = [0 for x in range(N)]
 
     drill = Meaning2KanjiDrill()
+
+    def get_due(record):
+        row = record.streak
+        age = TODAY - datetime.strptime(record.last, FMT)
+        return max(0, record.streak - age.days)
     
     for k, r in session.items():
-        writing = r.meaning2kanji
-        row = writing.streak
-        age = TODAY - datetime.strptime(writing.last, FMT)
-        due = max(0, writing.streak - age.days)
-        writing_sched[due] += 1
-
-        reading = r.phrase2on
-        col = reading.streak
-        age = TODAY - datetime.strptime(reading.last, FMT)
-        due = max(0, reading.streak - age.days)
-        reading_sched[due] += 1
+        writing_sched[get_due(r.meaning2kanji)] += 1
+        reading_sched[get_due(r.phrase2on)] += 1
+        meaning_sched[get_due(r.kanji2meaning)] += 1
         
-        table[row][col] += 1
-        endrow = max(row, endrow)
-        endcol = max(col, endcol)
-
-    endrow += 1
-    endcol += 1
-    print('  | ', end='')
-    for c in range(endcol):
-        print(f'{c:<4} ', end='')
-    print()
-    print('-'*endcol*5)
-    for r in range(endrow):
-        row = table[r]
-        print(f'{r:<2}| ', end='')
-        for c in range(endcol):
-            col = row[c]
-            if col:
-                cprint(f'{col:<4} ', 'green', attrs=['bold'], end='')
-            else:
-                cprint(f'{col:<4} ', 'yellow', end='')
-        print()
-
     print('Writing Due: ', end='')
-    for x in range(ROWS):
+    for x in range(N):
         print(f'{writing_sched[x]} ', end='')
     print('')
 
     print('Reading Due: ', end='')
-    for x in range(COLS):
+    for x in range(N):
         print(f'{reading_sched[x]} ', end='')
     print('')
-    
+
+    print('Meaning Due: ', end='')
+    for x in range(N):
+        print(f'{meaning_sched[x]} ', end='')
+    print('')
+
+
 def roma(args):
     kana, codes = roma2hira(args.hira, return_codes=True)
     print(f'{kana} {",".join(codes)}')
