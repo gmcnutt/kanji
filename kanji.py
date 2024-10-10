@@ -4,7 +4,6 @@ import csv
 import json
 import random
 import sys, tty, termios
-from collections import namedtuple
 from datetime import datetime, timedelta
 from termcolor import colored, cprint
 
