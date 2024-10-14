@@ -7,6 +7,7 @@ import sys, tty, termios
 from datetime import datetime, timedelta
 from termcolor import colored, cprint
 
+AGE_FACTOR = 1.5
 
 ROMA2KATA = {
     '_a': '30A1','a': '30A2','_i': '30A3','i': '30A4','_u': '30A5','u': '30A6','_e': '30A7','e': '30A8',
@@ -121,7 +122,7 @@ class Drill(object):
         for k, r in session.items():
             dr = getattr(r, self.name)
             age = TODAY - datetime.strptime(dr.last, FMT)
-            if age.days >= dr.streak:
+            if age.days >= (AGE_FACTOR * dr.streak):
                 due.append((k, dr))
         return due
     
@@ -465,9 +466,10 @@ def stats(args):
     drill = Meaning2KanjiDrill()
 
     def get_due(record):
-        row = record.streak
-        age = TODAY - datetime.strptime(record.last, FMT)
-        return max(0, record.streak - age.days)
+        last_date = datetime.strptime(record.last, FMT)
+        days_to_wait = int(record.streak * AGE_FACTOR)
+        days_waited = (TODAY - last_date).days
+        return max(0, days_to_wait - days_waited)
     
     for k, r in session.items():
         writing_sched[get_due(r.meaning2kanji)] += 1
