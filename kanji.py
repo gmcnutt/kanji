@@ -458,7 +458,7 @@ def stats(args):
     cards = load_cards(args.kanji)
     session = load_session(args.record)
     update_session(session, cards)
-    N = 10
+    N = 16
     writing_sched = [0 for x in range(N)]
     reading_sched = [0 for x in range(N)]
     meaning_sched = [0 for x in range(N)]
