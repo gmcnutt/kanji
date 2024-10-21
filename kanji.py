@@ -2,6 +2,7 @@
 import argparse
 import csv
 import json
+import math
 import random
 import sys, tty, termios
 from datetime import datetime, timedelta
@@ -466,11 +467,11 @@ def stats(args):
     drill = Meaning2KanjiDrill()
 
     def get_due(record):
-        last_date = datetime.strptime(record.last, FMT)
-        days_to_wait = int(record.streak * AGE_FACTOR)
-        days_waited = (TODAY - last_date).days
-        return max(0, days_to_wait - days_waited)
-    
+        age = TODAY - datetime.strptime(record.last, FMT)
+        days_to_wait = math.ceil(record.streak * AGE_FACTOR)
+        days_until_due = days_to_wait - age.days
+        return max(0, days_until_due)
+
     for k, r in session.items():
         writing_sched[get_due(r.meaning2kanji)] += 1
         reading_sched[get_due(r.phrase2on)] += 1
