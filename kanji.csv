@@ -246,7 +246,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 245,6551,salvation,11,kyuu,1006,"6551,6025,8eca",kyuukyuusha,ambulance
 246,7403,ball,11,kyuu,1005,"91ce,7403",yakyuu,baseball
 247,4e8c,two,2,ni,2,"5341,4e8c",juuni,twelve
-248,5f10,II,6,ni,379,"5f10,4e07,5186",nimanen,"20,000 yen"
+248,5f10,II,6,ni,379,"5f10,4e07,5186",niman:en,"20,000 yen"
 249,4ec1,humanity,4,ni,1063,"4ec1,738b,9580",niaumon,"temple gate with Deva Kings"
 250,7e2b,sew,16,hou,1685,"7e2b,5408",hougou,"suture; stitching"
 251,5cf0,summit,10,hou,1683,"9ad8,5cf0",kouhou,"lofty peak"
@@ -257,3 +257,9 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 256,65b0,new,13,shin,1619,"65b0,805e",shinbun,newspaper
 257,85aa,firewood,16,shin,1620,"85aa,6c34",shinsui,"fuel and water"
 258,89aa,parent,16,shin,1621,"89aa,5207",shinsetsu,"kind; thoughtful"
+259,4fb5,encroach,9,shin,1231,"4fb5,5165",shinnyuu,invasion
+260,6d78,immersed,10,shin,1232,"6d78,6c34",shinsui,flooding
+261,5bdd,"lie down",13,shin,1233,"5bdd,5ba4",shinshitsu,bedroom
+262,7ae0,badge,11,shou,464,"6587,7ae0",bunshou,"a sentence (of writing)"
+263,5f70,patent,14,shou,1851,"8868,5f70",hyoushou,commendation
+264,969c,hinder,14,shou,1393,"969c,5b50",shouji,"Japanese sliding paper windows"
