@@ -280,4 +280,19 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 279,971c,frost,17,sou,455,"971c,5bb3",sougai,"frost damage"
 280,5247,rule,9,soku,92,"53cd,5247",hansoku,"foul; infraction"
 281,6e2c,fathom,12,soku,160,"6e2c,91cf",sokuryou,"surveying;fathoming"
-282,5074,side,11,soku,1080,"5074,9762",sokumen,"aspect; facet"
+282,5074,side,11,soku,1049,"5074,9762",sokumen,"aspect; facet"
+283,4ee3,substitute,5,tai,1080,"4ea4,4ee3",koutai,"taking turns; exchange"
+284,8cb8,lend,12,tai,1082,"8cb8,4e0e",taiyo,"loan; lending"
+285,888b,sack,11,tai,1081,"90f5,888b",yuutai,"mail pouch; mailbag"
+286,4e19,"third class",5,hei,1096,"7532,4e59,4e19",kouotsuhei,"A, B, C"
+287,67c4,design,9,hei,1097,"6a2a,67c4",ouhei,arrogance
+288,75c5,ill,10,hei,1813,"75c5,75e5",shippei,illness
+289,7384,mysterious,5,gen,1484,"7384,95a2",genkan,"front foor; main entrance"
+290,5f26,bowstring,8,gen,1487,"6b63,5f26",seigen,sine
+291,8237,gunwale,11,gen,2015,"8237,7a93",gensou,porthole
+292,5584,virtuous,12,zen,1112,"6148,5584",jizen,benevolence
+293,81b3,"dining tray",16,zen,1113,"304a,81b3",ozen,"table tray; serving of food"
+294,7e55,darning,18,zen,1433,"4fee,7e55",shuuzen,"repair; mending"
+295,9060,distant,13,en,429,"6c38,9060",eien,eternity
+296,5712,park,13,en,629,"5ead,5712",teien,"(Japanese) garden"
+297,733f,monkey,13,en,430,"91ce,733f",yaen,"wild monkey"

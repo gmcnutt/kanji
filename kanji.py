@@ -66,7 +66,8 @@ ROMA2HIRA = {
     'tte': ('_tsu', 'te'),
     'ryo': ('ri', '_yo'),
     'hyo': ('hi', '_yo'),
-    'sso': ('_tsu', 'so')
+    'sso': ('_tsu', 'so'),
+    'ppe': ('_tsu', 'pe')
 }
 
 # Set up some JSON-serializable data structures to track drill results.
