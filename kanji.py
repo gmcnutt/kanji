@@ -33,7 +33,8 @@ ROMA2KATA = {
     'cha': ('chi', '_ya'),
     'chu': ('chi', '_yu'),
     'cho': ('chi', '_yo'),
-    'ryo': ('ri', '_yo')
+    'ryo': ('ri', '_yo'),
+    'byo': ('bi', '_yo')
 }
 
 ROMA2HIRA = {
@@ -67,7 +68,9 @@ ROMA2HIRA = {
     'ryo': ('ri', '_yo'),
     'hyo': ('hi', '_yo'),
     'sso': ('_tsu', 'so'),
-    'ppe': ('_tsu', 'pe')
+    'ssa': ('_tsu', 'sa'),
+    'ppe': ('_tsu', 'pe'),
+    'byo': ('bi', '_yo'),
 }
 
 # Set up some JSON-serializable data structures to track drill results.

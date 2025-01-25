@@ -286,7 +286,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 285,888b,sack,11,tai,1081,"90f5,888b",yuutai,"mail pouch; mailbag"
 286,4e19,"third class",5,hei,1096,"7532,4e59,4e19",kouotsuhei,"A, B, C"
 287,67c4,design,9,hei,1097,"6a2a,67c4",ouhei,arrogance
-288,75c5,ill,10,hei,1813,"75c5,75e5",shippei,illness
+288,75c5,ill,10,hei,1813,"75e5,75c5",shippei,illness
 289,7384,mysterious,5,gen,1484,"7384,95a2",genkan,"front foor; main entrance"
 290,5f26,bowstring,8,gen,1487,"6b63,5f26",seigen,sine
 291,8237,gunwale,11,gen,2015,"8237,7a93",gensou,porthole
@@ -302,3 +302,15 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 301,8db3,leg,7,soku,1372,"4e0d,8db3",fusoku,insufficiency
 302,4fc3,stimulate,8,soku,1373,"4fc3,9032",sokushin,"promotion; facilitation"
 303,6349,nab,10,soku,1374,"6355,6349",hosoku,"capture; apprehension"
+304,82d7,seedling,8,byou,249,"7a2e,82d7",shubyou,"seeds and seedlings"
+305,63cf,sketch,11,byou,723,"70b9,63cf",tenbyou,"a sketch; profile"
+306,732b,cat,11,byou,259,"611b,732b",aibyou,"pet cat"
+307,5bb6,house,10,ka,580,"5bb6,5ead",katei,home
+308,5ac1,"marry into",13,ka,581,"8ec2,5ac1",tenka,"remarrying (archaic)"
+309,7a3c,earnings,15,ka,959,"7a3c,52d5",kadou,"operation (of a factory); work"
+310,672b,extremity,9,matsu,230,"7c97,672b",somatsu,"plain; coarse"
+311,6cab,splash,8,matsu,232,"6ce1,6cab",houmatsu,"bubbles; foam"
+312,62b9,rub,8,matsu,694,"62b9,6bba",massatsu,obliteration
+313,5ce1,gorge,9,kyou,1355,"6d77,5ce1",kaikyou,"straits; sound; channel"
+314,72ed,cramped,9,kyou,1356,"504f,72ed",henkyou,"narrow-minded"
+315,631f,sandwiched,9,kyou,1357,"631f,6483",kyougeki,"catch in a crossfire"
