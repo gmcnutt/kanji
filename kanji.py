@@ -62,6 +62,7 @@ ROMA2HIRA = {
     'chu': ('chi', '_yu'), 'kyu': ('ki', '_yu'),
     'cho': ('chi', '_yo'),
     'kka': ('_tsu', 'ka'),
+    'kkyo': ('_tsu', 'ki', '_yo'),
     'ppa': ('_tsu', 'pa'), 'ppo': ('_tsu', 'po'),
     'sshi': ('_tsu', 'shi'),
     'tte': ('_tsu', 'te'),
