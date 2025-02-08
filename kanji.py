@@ -34,7 +34,8 @@ ROMA2KATA = {
     'chu': ('chi', '_yu'),
     'cho': ('chi', '_yo'),
     'ryo': ('ri', '_yo'),
-    'byo': ('bi', '_yo')
+    'byo': ('bi', '_yo'),
+    'kki': ('_tsu', 'ki')
 }
 
 ROMA2HIRA = {
@@ -72,6 +73,7 @@ ROMA2HIRA = {
     'ssa': ('_tsu', 'sa'),
     'ppe': ('_tsu', 'pe'),
     'byo': ('bi', '_yo'),
+    'kki': ('_tsu', 'ki')
 }
 
 # Set up some JSON-serializable data structures to track drill results.
@@ -466,7 +468,7 @@ def stats(args):
     cards = load_cards(args.kanji)
     session = load_session(args.record)
     update_session(session, cards)
-    N = 20
+    N = 25
     writing_sched = [0 for x in range(N)]
     reading_sched = [0 for x in range(N)]
     meaning_sched = [0 for x in range(N)]
