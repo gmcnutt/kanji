@@ -320,9 +320,9 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 319,4faf,marquis,9,kou,1767,"738b,4faf",oukou,"kings and princes"
 320,5589,throat,12,kou,1768,"54bd,5589",inkou,throat
 321,5019,climate,10,kou,1769,"5019,88de",kouho,candidacy
-322,5c48,yield,8,ketsu,1140,"9000,5c48",taiketsu,boredom
-323,6398,dig,11,ketsu,1141,"63a1,6398",saiketsu,mining
-324,7a9f,cavern,13,ketsu,1420,"6d1e,7a9f",douketsu,cavern
+322,5c48,yield,8,kutsu,1140,"9000,5c48",taikutsu,boredom
+323,6398,dig,11,kutsu,1141,"63a1,6398",saikutsu,mining
+324,7a9f,cavern,13,kutsu,1420,"6d1e,7a9f",doukutsu,cavern
 325,5efa,build,9,ken,417,"5efa,8b70",kengi,"submission of a proposal"
 326,9375,key,17,ken,418,"9375,76e4",kenban,keyboard
 327,5065,healthy,11,ken,1048,"4fdd,5065",maken,"health protection; hygiene"
@@ -385,3 +385,21 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 384,7891,tombstone,13,hi,1630,"7891,9298",himei,epitaph; monument inscription
 385,540d,name,6,mei,117,"6709,540d",yuumei,famous
 386,9298,inscription,14,mei,293,"7891,9298",himei,epitaph; monument inscription
+387,5229,profit,7,ri,972,"5229,7528",riyou,use
+388,75e2,diarrhea,12,ri,1832,"4e0b,75e2",geri,diarrhea
+389,670b,companion,8,hou,19,"670b,53cb",houyou,friend; companion
+390,5d29,crumble,11,hou,836,"5d29,58ca",houkai,collapse
+391,8868,surface,8,hyou,1666,"8868,88c5",hyousou,mounting (a picture or hanging)
+392,4ff5,bag,10,hyou,1667,"571f,4ff5",dohyou,sandbags; sumo ring
+393,5c09,military officer,11,i,1176,"5c09,5b98",ikan,company officer (low-ranking)
+394,6170,consolation,15,i,1177,"6170,5b89",ian,solace; comfort
+395,4e57,ride,9,jou,1709,"4e57,8eca",jousha,riding in a car
+396,5270,surplus,11,jou,1710,"904e,5270",kajou,excess
+397,53d7,accept,8,ju,794,"53d7,9a13",juken,sitting for an exam
+398,6388,impart,11,ju,795,"6559,6388",kyuuju,professor
+399,9700,demand,14,ju,1249,"9700,8981",juyou,demand (economic)
+400,5112,Confucian,16,ju,1250,"5112,5b66",jukaku,Confucianism
+401,5f93,accompany,10,juu,942,"5f93,4e8b",juuji,engagement; pursuit
+402,7e26,vertical,16,juu,1436,"64cd,7e26",soujuu,piloting; manuevering
+403,587e,cram school,14,juku,331,"587e,9577",jukuchou,principal of a private school
+404,719f,mellow,15,juku,332,"6210,719f",seijuku,ripeness; maturity
