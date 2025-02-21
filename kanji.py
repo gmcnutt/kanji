@@ -459,8 +459,14 @@ def review(args):
     update_session(session, cards)
 
     drill = DRILL_CLASSES[args.drillname]()
+    start = datetime.now()
     drill.run(cards, session, args.limit)
+    end = datetime.now()
     save_session(session, args.record)
+
+    duration = (end - start)
+    sec_per_card = duration.seconds/len(cards)
+    print(f'{duration}--{sec_per_card} seconds per card')
 
 
 def stats(args):
