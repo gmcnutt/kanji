@@ -174,7 +174,9 @@ class Drill(object):
                 fails.append(card)
             dr.last = TODAYSTR
 
-        cprint(f'You passed {len(due)-len(fails)}/{len(due)} cards', "green")
+        num_correct = total - len(fails)
+        percent = round(num_correct * 100 / total)
+        cprint(f'You passed {num_correct}/{total} cards ({percent}%)', "green")
             
         # Review failures.
         while fails:

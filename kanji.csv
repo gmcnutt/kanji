@@ -467,7 +467,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 466,76df,alliance,13,mei,1558,"540c,76df",doumei,alliance; association
 467,6c11,people,5,min,1976,"56fd,6c11",kokumin,people (of a country)
 468,7720,sleep,10,min,1977,"5b89,7720",anmin,peaceful sleep
-469,7136,sort of thing,12,nen,256,"5929,7146",tennen,natural
+469,7136,sort of thing,12,nen,256,"5929,7136",tennen,natural
 470,71c3,burn,16,nen,549,"53ef,71c3,6027",kanensei,combustibility
 471,66a6,calendar,14,reki,226,"9084,66a6",kanreki,60th birthday
 472,6b74,curriculum,14,reki,402,"6b74,53f2",rekishi,history
@@ -475,3 +475,12 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 474,6fc3,concentrated,16,nou,2171,"6fc3,539a",noukou,thickness; density
 475,7981,prohibition,13,kin,1179,"7981,6b62",kinshi,prohibition
 476,895f,collar,18,kin,1180,"895f,5ea6",kindo,magnanimity
+477,5211,punish,6,kei,734,"6b7b,5211",shikei,death penalty
+478,578b,mould,9,kei,735,"539f,578b",genkei,model; prototype
+479,5bdf,guess,14,satsu,1184,"8b66,5bdf",keisatsu,police
+480,64e6,grate,17,satsu,1185,"6469,64e6",masatsu,friction; chafing
+481,53cc,pair,4,sou,753,"53cc,65b9",souhou,both sides
+482,6851,mulberry,10,sou,754,"6851,5712",souen,mulberry orchard
+483,5e2f,sash,10,tai,444,"5730,5e2f",chitai,geographical zone
+484,6ede,stagnate,13,tai,445,"6ede,8ca8",taika,freight backlog
+485,5b85,home,6,taku,2065,"81ea,5b85",jitaku,private residence
