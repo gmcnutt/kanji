@@ -37,7 +37,8 @@ ROMA2KATA = {
     'byo': ('bi', '_yo'),
     'kki': ('_tsu', 'ki'),
     'hyo': ('hi', '_yo'),
-    'kya': ('ki', '_ya')
+    'kya': ('ki', '_ya'),
+    'tto': ('_tsu', 'to')
 }
 
 ROMA2HIRA = {
@@ -76,10 +77,11 @@ ROMA2HIRA = {
     'ppe': ('_tsu', 'pe'),
     'byo': ('bi', '_yo'),
     'kki': ('_tsu', 'ki'),
-    'kko': ('_tsu', 'ko'),
-    'ja': ('ji', '_ya'),
     'kke': ('_tsu', 'ke'),
-    'kya': ('ki', '_ya')
+    'kko': ('_tsu', 'ko'),
+    'tto': ('_tsu', 'to'),
+    'ja': ('ji', '_ya'),
+    'kya': ('ki', '_ya'),
 }
 
 # Set up some JSON-serializable data structures to track drill results.
@@ -287,7 +289,10 @@ def convert_roma(phr, code_table, return_codes=False):
     saw_n = False  # 'n' requires special handling
     for c in phr:
         if saw_n:
-            if c not in 'aeiouy':
+            # Note: at one point I had y in this list, but then minyo
+            # failed to parse so I took it out. Note sure why I thought
+            # I needed y originally.
+            if c not in 'aeiou':
                 # Must have been terminal 'n'
                 code = code_table[s]
                 res.append(decode(code))
