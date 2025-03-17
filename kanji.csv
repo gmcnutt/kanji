@@ -545,7 +545,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 544,9867,look back,21,ko,1165,"9867,554f",komon,advisor
 545,7d2b,purple,12,shi,1475,"7d2b,5916,7dda",shigaisen,ultraviolet rays
 546,96cc,female,14,shi,605,"96cc,96c4",shiyuu,males and females
-547,5352,graduate,8,sotsu,1102,"5352,696d",sotsugyokau,graduation (from school)
+547,5352,graduate,8,sotsu,1102,"5352,696d",sotsugyou,graduation (from school)
 548,7387,ratio,11,sotsu,1874,"7387,5148",sossen,pioneer; forerunner
 549,5230,arrival,8,tou,817,"5230,5e95",toutei,absolutely; (not) at all
 550,5012,overthrow,10,tou,1055,"5352,5012",sottou,swoon; fainting fit
@@ -555,3 +555,12 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 554,969b,occasion,14,sai,1392,"56fd,969b",sokusai,international
 555,5bc6,secrecy,11,mitsu,837,"7d98,5bc6",himitsu,secret
 556,871c,honey,14,mitsu,838,"871c,623f",mitsubou,honeycomb
+557,5854,pagoda,12,tou,270,"91d1,5b57,5854",kinjitou,pyramid; monumental work
+558,642d,board,12,tou,698,"642d,4e57",toujou,boarding (a vessel)
+559,5ea7,sit,10,za,1100,"5ea7,5e2d",zaseki,seat
+560,632b,sprain,10,za,1101,"637b,632b",nenza,sprain
+561,5ff5,wish,8,nen,1715,"8a18,5ff5",kinen,commemoration
+562,637b,wrench,11,nen,1716,"637b,632b",nenza,sprain
+563,75be,rapidly,10,shitsu,1819,"75be,98a8,8fc5,96f7,7684",shippoujinraiteki,lightning fast
+564,5ac9,envy,13,shitsu,1820,"5ac9,59ac",shitto,jealousy
+565,5c31,concerning,12,shuu,2121,"5c31,8077",shuushoku,taking up a job
