@@ -42,7 +42,9 @@ ROMA2KATA = {
     'tto': ('_tsu', 'to'),
     'ssho': ('_tsu', 'shi', '_yo'),
     'gyo': ('gi', '_yo'),
-    'gyu': ('gi', '_yu')    
+    'gyu': ('gi', '_yu'),
+    'nya': ('n', '_ya'),
+    'nyo': ('n', '_yo')    
 }
 
 ROMA2HIRA = {
@@ -91,7 +93,9 @@ ROMA2HIRA = {
     'ssho': ('_tsu', 'shi', '_yo'),
     'gyo': ('gi', '_yo'),
     'gyu': ('gi', '_yu'),
-    'sse': ('_tsu', 'se')
+    'sse': ('_tsu', 'se'),
+    'nya': ('n', '_ya'),
+    'nyo': ('n', '_yo')
 }
 
 # Set up some JSON-serializable data structures to track drill results.
@@ -301,8 +305,9 @@ def convert_roma(phr, code_table, return_codes=False):
         if saw_n:
             # Note: at one point I had y in this list, but then minyo
             # failed to parse so I took it out. Note sure why I thought
-            # I needed y originally.
-            if c not in 'aeiou':
+            # I needed y originally. Update: words like "nyaku" is why.
+            #import pdb; pdb.set_trace()
+            if c not in 'aeiouy':
                 # Must have been terminal 'n'
                 code = code_table[s]
                 res.append(decode(code))
