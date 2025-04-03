@@ -8,7 +8,7 @@ import sys, tty, termios
 from datetime import datetime, timedelta
 from termcolor import colored, cprint
 
-AGE_FACTOR = 1.5
+AGE_FACTOR = 1.6
 
 ROMA2KATA = {
     '_a': '30A1','a': '30A2','_i': '30A3','i': '30A4','_u': '30A5','u': '30A6','_e': '30A7','e': '30A8',
@@ -33,9 +33,12 @@ ROMA2KATA = {
     'cha': ('chi', '_ya'),
     'chu': ('chi', '_yu'),
     'cho': ('chi', '_yo'),
+    'rya': ('ri', '_ya'),
     'ryo': ('ri', '_yo'),
     'ryu': ('ri', '_yu'),
     'byo': ('bi', '_yo'),
+    'bya': ('bi', '_ya'),    
+    'mya': ('mi', '_ya'),    
     'kki': ('_tsu', 'ki'),
     'hyo': ('hi', '_yo'),
     'kya': ('ki', '_ya'),
@@ -44,7 +47,9 @@ ROMA2KATA = {
     'gyo': ('gi', '_yo'),
     'gyu': ('gi', '_yu'),
     'nya': ('n', '_ya'),
-    'nyo': ('n', '_yo')    
+    'hya': ('hi', '_ya'),
+    'nyo': ('n', '_yo'),
+    'tta': ('_tsu', 'ta'),
 }
 
 ROMA2HIRA = {
@@ -67,7 +72,11 @@ ROMA2HIRA = {
     'shu': ('shi', '_yu'),
     'sho': ('shi', '_yo'),
     'ju': ('ji', '_yu'),
-    'jo': ('ji', '_yo'), 'byo': ('bi', '_yo'), 'nyu': ('ni', '_yu'),
+    'jo': ('ji', '_yo'),
+    'byo': ('bi', '_yo'),
+    'nyu': ('ni', '_yu'),
+    'bya': ('bi', '_ya'),    
+    'mya': ('mi', '_ya'),    
     'cha': ('chi', '_ya'),
     'chu': ('chi', '_yu'), 'kyu': ('ki', '_yu'),
     'cho': ('chi', '_yo'),
@@ -76,7 +85,9 @@ ROMA2HIRA = {
     'ppa': ('_tsu', 'pa'), 'ppo': ('_tsu', 'po'),
     'sshi': ('_tsu', 'shi'),
     'sshu': ('_tsu', 'shi', '_yu'),
+    'tta': ('_tsu', 'ta'),
     'tte': ('_tsu', 'te'),
+    'rya': ('ri', '_ya'),
     'ryo': ('ri', '_yo'),
     'hyo': ('hi', '_yo'),
     'sso': ('_tsu', 'so'),
@@ -95,7 +106,8 @@ ROMA2HIRA = {
     'gyu': ('gi', '_yu'),
     'sse': ('_tsu', 'se'),
     'nya': ('n', '_ya'),
-    'nyo': ('n', '_yo')
+    'hya': ('hi', '_ya'),
+    'nyo': ('n', '_yo'),
 }
 
 # Set up some JSON-serializable data structures to track drill results.
@@ -365,12 +377,12 @@ def load_cards(filename):
         r = csv.reader(f)
         header = next(r)
         for line in r:
-            rk2, unic, mean, strok, on, rk1, phr,phr_kana,phr_eng=line
+            pk, rk2, unic, mean, strok, on, rk1, phr,phr_kana,phr_eng=line
             unic = decode(unic)
             on = roma2kata(on)
             phr = decode_phrase(phr)
             phr_kana = roma2hira(phr_kana)
-            data[rk2] = {
+            data[pk] = {
                 "rk2": rk2,
                 "unicode": unic,
                 "meaning": mean,
@@ -502,7 +514,7 @@ def stats(args):
     cards = load_cards(args.kanji)
     session = load_session(args.record)
     update_session(session, cards)
-    N = 25
+    N = 30
     writing_sched = [0 for x in range(N)]
     reading_sched = [0 for x in range(N)]
     meaning_sched = [0 for x in range(N)]
