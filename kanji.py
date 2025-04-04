@@ -169,12 +169,16 @@ class Drill(object):
             if age.days >= (AGE_FACTOR * dr.streak):
                 due.append((k, dr))
         return due
+
+    def filter_due(self, due, cards):
+        return due
     
     def run(self, cards, session, limit=None):
         
         # Count cards due for review. If a card has passed N times, it is
         # due N days from the last day it passed.
         due = self.get_due(session)
+        due = self.filter_due(due, cards)
 
         if not due:
             cprint(f'{colored("Nothing due", "green")}')
@@ -256,6 +260,15 @@ class Phrase2OnDrill(Drill):
 
     name = 'phrase2on'
     instructions = 'Given the kanji and exemplary phrase, type the romaji for the on reading'
+
+    def filter_due(self, due, cards):
+        """Remove any cards that have no 'on' reading."""
+        filtered = []
+        for (k, r) in due:
+            card = cards[k]
+            if card['on'] is not None:
+                filtered.append((k, r))
+        return filtered 
     
     def review(self, card, i, total):
         promptstr = f'({i+1}/{total}) {colored(card["unicode"], "cyan", attrs=["bold"])} in {colored(card["phrase"]["kanji"], "cyan")}? '
@@ -301,7 +314,10 @@ def print_range(title, start, end):
 
 
 def decode(uni):
-    return chr(int(uni, 16))
+    if uni:
+        return chr(int(uni, 16))
+    else:
+        return None
 
 
 def decode_phrase(phr):
@@ -379,8 +395,8 @@ def load_cards(filename):
         for line in r:
             pk, rk2, unic, mean, strok, on, rk1, phr,phr_kana,phr_eng=line
             unic = decode(unic)
-            on = roma2kata(on)
-            phr = decode_phrase(phr)
+            on = roma2kata(on) or None
+            phr = decode_phrase(phr) if phr else None
             phr_kana = roma2hira(phr_kana)
             data[pk] = {
                 "rk2": rk2,
@@ -399,14 +415,11 @@ def load_cards(filename):
 
     
 def dump_entry(d):
-    phr = d["phrase"]["kanji"]
-    phr_kana = d["phrase"]["kana"]
-    phr_eng =  d["phrase"]["meaning"]
-    try:
-        print(f'{d["rk2"]:<4} {d["unicode"]} {d["meaning"]:12} {d["on"]:<6}  {phr:<6} {phr_kana:6} {phr_eng}')
-    except:
-        print(d)
-
+    phr = d["phrase"]["kanji"] or '-'
+    phr_kana = d["phrase"]["kana"] or '-'
+    phr_eng =  d["phrase"]["meaning"] or '-'
+    on = d["on"] or '-'
+    print(f'{d["rk2"]:<4} {d["unicode"]} {d["meaning"]:12} {on:<6}  {phr:<6} {phr_kana:6} {phr_eng}')
     
 def dump_csv(filename):
     data = load_cards(filename)
@@ -528,8 +541,10 @@ def stats(args):
         return max(0, days_until_due)
 
     for k, r in session.items():
+        card = cards[k]
         writing_sched[get_due(r.meaning2kanji)] += 1
-        reading_sched[get_due(r.phrase2on)] += 1
+        if card['on'] is not None:
+            reading_sched[get_due(r.phrase2on)] += 1
         meaning_sched[get_due(r.kanji2meaning)] += 1
         
     print('Writing Due: ', end='')
