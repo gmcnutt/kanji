@@ -182,7 +182,7 @@ class Drill(object):
 
         if not due:
             cprint(f'{colored("Nothing due", "green")}')
-            return
+            return 0
 
         # Review the cards in random order, remembering the fails for
         # review below.
@@ -212,14 +212,15 @@ class Drill(object):
             
         # Review failures.
         while fails:
-            total = len(fails)
-            cprint(f"Reviewing failures ({total} cards)", "yellow")
+            failed = len(fails)
+            cprint(f"Reviewing failures ({failed} cards)", "yellow")
             refails = []
             for i, card in enumerate(fails):
-                if not self.review(card, i, total):
+                if not self.review(card, i, failed):
                     refails.append(card)
                 print()
             fails = refails
+        return total
 
 
 class Meaning2KanjiDrill(Drill):
@@ -511,12 +512,14 @@ def review(args):
 
     drill = DRILL_CLASSES[args.drillname]()
     start = datetime.now()
-    drill.run(cards, session, args.limit)
+    num_cards = drill.run(cards, session, args.limit)
+    if not num_cards:
+        return
     end = datetime.now()
     save_session(session, args.record)
 
     duration = (end - start)
-    sec_per_card = duration.seconds/len(cards)
+    sec_per_card = duration.seconds/num_cards
     print(f'{duration}--{sec_per_card} seconds per card')
 
 
