@@ -8,6 +8,7 @@ from kanji import decode, decode_phrase, roma2kata, roma2hira
     
 
 def load_kanji_table(cur, data):
+    """Load the table of kanji with their stroke counts."""
     for e in data:
         try:
             cur.execute(
@@ -20,10 +21,43 @@ def load_kanji_table(cur, data):
             pass
 
 
+def load_phrase_table(cur, data):
+    """Load the table of english/hiragana phrases."""
+    for e in data:
+        try:
+            if not e['phrase_meaning']:
+                continue
+            cur.execute(
+                "INSERT INTO phrase (meaning, hiragana) VALUES(?, ?)",
+                (e["phrase_meaning"],
+                 e["phrase_hiragana"])
+            )
+        except sqlite3.IntegrityError:
+            # Probably already loaded. Ignore.
+            pass        
+
+def load_phrase_kanji_table(cur, data):
+    """Load the table that associates a phrase to the kanji in it."""
+    for e in data:
+        try:
+            if not e['phrase_meaning']:
+                continue
+            cur.execute(
+                "INSERT INTO phrase (meaning, hiragana) VALUES(?, ?)",
+                (e["phrase_meaning"],
+                 e["phrase_hiragana"])
+            )
+        except sqlite3.IntegrityError:
+            # Probably already loaded. Ignore.
+            pass        
+        
+
 def load_database(dbname, data):
     con = sqlite3.connect(dbname)
     cur = con.cursor()
     load_kanji_table(cur, data)
+    load_phrase_table(cur, data)
+    load_phrase_kanji_table(cur, data)
     con.commit()
     con.close()
 
@@ -36,10 +70,10 @@ def parse_csv_file(filename):
         r = csv.reader(f)
         header = next(r)
         for line in r:
-            rk2, unic, mean, strok, on, rk1, phr,phr_kana,phr_eng=line
+            pk, rk2, unic, mean, strok, on, rk1, phr,phr_kana,phr_eng=line
             unic = decode(unic)
-            on = roma2kata(on)
-            phr = decode_phrase(phr)
+            on = roma2kata(on) or None
+            phr = decode_phrase(phr) if phr else None
             phr_kana = roma2hira(phr_kana)
             data.append({
                 "framev2_4_frame_number": rk2,
