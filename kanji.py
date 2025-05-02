@@ -8,7 +8,7 @@ import sys, tty, termios
 from datetime import datetime, timedelta
 from termcolor import colored, cprint
 
-from roma import decode, decode_phrase, roma2kata, roma2hira, NotKanaError
+from kana import decode, decode_phrase, roma2kata, roma2hira, NotKanaError
 
 AGE_FACTOR = 1.6
 

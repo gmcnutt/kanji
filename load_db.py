@@ -4,7 +4,7 @@ import argparse
 import csv
 import sqlite3
 
-from kanji import decode, decode_phrase, roma2kata, roma2hira
+from kana import decode, decode_phrase, roma2kata, roma2hira
     
 
 def load_kanji_table(cur, data):
