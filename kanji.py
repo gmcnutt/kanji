@@ -152,10 +152,7 @@ class CardRecord(object):
     def load(klass, v):
         m2k = DrillRecord.load(v[0])
         p2o = DrillRecord.load(v[1])
-        if len(v) == 3:
-            k2m = DrillRecord.load(v[2])
-        else:
-            k2m = None
+        k2m = DrillRecord.load(v[2])
         return klass(m2k, p2o, k2m)
 
 
@@ -202,7 +199,7 @@ class Drill(object):
                 cprint(f"ok {dr.streak}x", "green", attrs=["bold"])
             else:
                 dr.streak = 0
-                cprint(f"fail (R-{card['rk2']})", "red", attrs=["bold"])
+                cprint(f"fail (R-{card['rk2']}/{card['rk1']})", "red", attrs=["bold"])
                 fails.append(card)
             dr.last = TODAYSTR
 
@@ -223,7 +220,7 @@ class Drill(object):
         return total
 
 
-class Meaning2KanjiDrill(Drill):
+class WriteKanjiDrill(Drill):
 
     name = 'meaning2kanji'
     instructions = 'Given the meaning, write the kanji'
@@ -238,7 +235,7 @@ class Meaning2KanjiDrill(Drill):
         return ok == 'y'
 
 
-class Kanji2MeaningDrill(Drill):
+class TypeMeaningDrill(Drill):
 
     name = 'kanji2meaning'
     instructions = 'Given the kanji, write the meaning'
@@ -257,7 +254,7 @@ class Kanji2MeaningDrill(Drill):
         return ok
 
 
-class Phrase2OnDrill(Drill):
+class OnDrill(Drill):
 
     name = 'phrase2on'
     instructions = 'Given the kanji and exemplary phrase, type the romaji for the on reading'
@@ -294,9 +291,9 @@ class Phrase2OnDrill(Drill):
     
 
 DRILL_CLASSES = {
-    'p2o': Phrase2OnDrill,
-    'm2k': Meaning2KanjiDrill,
-    'k2m': Kanji2MeaningDrill
+    'on': OnDrill,
+    'write': WriteKanjiDrill,
+    'mean': TypeMeaningDrill
 }
 
 
@@ -535,7 +532,7 @@ def stats(args):
     reading_sched = [0 for x in range(N)]
     meaning_sched = [0 for x in range(N)]
 
-    drill = Meaning2KanjiDrill()
+    drill = WriteKanjiDrill()
 
     def get_due(record):
         age = TODAY - datetime.strptime(record.last, FMT)
@@ -555,7 +552,7 @@ def stats(args):
         print(f'{writing_sched[x]} ', end='')
     print('')
 
-    print('Reading Due: ', end='')
+    print('     On Due: ', end='')
     for x in range(N):
         print(f'{reading_sched[x]} ', end='')
     print('')
@@ -590,7 +587,7 @@ if __name__ == "__main__":
     cmdp.set_defaults(func=stats)
     
     cmdp = subp.add_parser('review', help="Drill Remembering the Kanji I")
-    cmdp.add_argument('-d', '--drillname', choices=('m2k', 'p2o', 'k2m'), default='m2k')
+    cmdp.add_argument('-d', '--drillname', choices=('write', 'on', 'mean'), default='write')
     cmdp.add_argument('-l', '--limit', type=int, default=None, help='Limit the number of cards to review')
 
     cmdp.set_defaults(func=review)
