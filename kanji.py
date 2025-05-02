@@ -11,15 +11,13 @@ from termcolor import colored, cprint
 from kana import decode, decode_phrase, roma2kata, roma2hira, NotKanaError
 
 AGE_FACTOR = 1.6
-
-
-# Set up some JSON-serializable data structures to track drill results.
 TODAY = datetime.today()
 FMT = '%Y-%m-%d'
 TODAYSTR = TODAY.strftime(FMT)
 
-class DrillRecord(object):
 
+class DrillRecord(object):
+    """Track drill results for a single question."""
     def __init__(self, streak=0, last=TODAYSTR):
         self.streak = streak
         self.last = last
@@ -33,7 +31,7 @@ class DrillRecord(object):
 
 
 class CardRecord(object):
-
+    """Track all types of drill results for a single card."""
     def __init__(self, m2k=None, p2o=None, k2m=None):
         self.meaning2kanji=m2k or DrillRecord()
         self.phrase2on = p2o or DrillRecord()
@@ -55,7 +53,7 @@ class CardRecord(object):
 
 
 class Drill(object):
-
+    """General question/answer drill framework."""
     def get_due(self, session):
         due = []
         for k, r in session.items():
@@ -118,7 +116,7 @@ class Drill(object):
         return total
 
 
-class WriteKanjiDrill(Drill):
+class WritingDrill(Drill):
 
     name = 'meaning2kanji'
     instructions = 'Given the meaning, write the kanji'
@@ -133,7 +131,7 @@ class WriteKanjiDrill(Drill):
         return ok == 'y'
 
 
-class TypeMeaningDrill(Drill):
+class MeaningDrill(Drill):
 
     name = 'kanji2meaning'
     instructions = 'Given the kanji, write the meaning'
@@ -190,8 +188,8 @@ class OnDrill(Drill):
 
 DRILL_CLASSES = {
     'on': OnDrill,
-    'write': WriteKanjiDrill,
-    'mean': TypeMeaningDrill
+    'write': WritingDrill,
+    'mean': MeaningDrill
 }
 
 
@@ -298,6 +296,7 @@ def review_card(card):
         return False
     return True
 
+
 def load_session(filename):
     # Load past session. A session is a dict where the keys are
     # indices into the 'cards' array and the values are CardRecords.
@@ -356,7 +355,7 @@ def stats(args):
     reading_sched = [0 for x in range(N)]
     meaning_sched = [0 for x in range(N)]
 
-    drill = WriteKanjiDrill()
+    drill = WritingDrill()
 
     def get_due(record):
         age = TODAY - datetime.strptime(record.last, FMT)
@@ -397,6 +396,43 @@ def kanji2unicode(args):
         print(f'{k} {hex(ord(k))}')
 
 
+def build_kanji_table(cards):
+    table = {}
+    for pk, card in cards.items():
+        kanji = card["unicode"]
+        table[kanji] = card
+    return table
+
+
+def convert_session_file(args):
+    cards = load_cards(args.kanji)
+    old_session = load_session(args.record)
+    new_session = {
+        "writing": {},
+        "on": {},
+        "meaning": {},
+        "reading": {}
+    }
+
+    kanji_table = build_kanji_table(cards)
+    
+    for pk, results in old_session.items():
+        card = cards[pk]
+        meaning = card["meaning"]
+        kanji = card["unicode"]
+        phrase = card["phrase"]["kanji"]
+        new_session["writing"][meaning] = results.meaning2kanji.save()
+        new_session["meaning"][kanji] = results.kanji2meaning.save()
+        if not phrase:
+            continue
+        new_session["on"][kanji + '-' + phrase] = results.phrase2on.save()
+        if all(kanji in kanji_table for kanji in phrase):
+            new_session["reading"][phrase] = DrillRecord().save()
+    
+    with open('new_session.json', 'w') as f:
+        json.dump(new_session, f)
+
+        
 if __name__ == "__main__":
     pars = argparse.ArgumentParser(description="Kanji Tools")
     pars.add_argument('-k', '--kanji', help="Kanji CSV file to load", default="kanji.csv")
@@ -423,6 +459,9 @@ if __name__ == "__main__":
     cmdp = subp.add_parser('uni', help="Show the unicode for a character or list of characters")
     cmdp.add_argument('kanji')
     cmdp.set_defaults(func=kanji2unicode)
+
+    cmdp = subp.add_parser('convert', help="Convert old-style session file to new-style")
+    cmdp.set_defaults(func=convert_session_file)
     
     args = pars.parse_args()
     args.func(args)
