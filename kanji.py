@@ -436,6 +436,53 @@ def run_cmd_uni(args):
         print(f'{k} {hex(ord(k))}')
 
 
+def run_cmd_convert(args):
+    """Convert the old-style record file to new-style."""
+    cards = load_cards(args.kanji)
+    old_session = Session.load(args.record)
+    new_session = {
+        "writing": {},
+        "on": {},
+        "meaning": {},
+        "reading": {}
+    }
+
+    kanji_table = build_kanji_table(cards)
+
+    # The old session file stored the drill results for each card. For
+    # each card in the old session file...
+    for pk, results in old_session.data.items():
+
+        # Extract its results for convenience.
+        card = cards[pk]
+        meaning = card["meaning"]
+        kanji = card["unicode"]
+        phrase = card["phrase"]["kanji"]
+
+        # Add this card's history to the arrays for tracking the
+        # writing and the meaning drill results. In the new format
+        # each drill has its own list of results, one result per card.
+        new_session["writing"][meaning] = results.meaning2kanji.save()
+        new_session["meaning"][kanji] = results.kanji2meaning.save()
+
+        # Some cards do not have phrases, so there are no 'on' or
+        # reading drill results. Skip these.
+        if not phrase:
+            continue
+
+        # Otherwise add the 'on' drill results.
+        new_session["on"][kanji + '-' + phrase] = results.phrase2on.save()
+
+        # Currently, there are no reading drill results, but save
+        # placeholders.
+        if all(kanji in kanji_table for kanji in phrase):
+            new_session["reading"][phrase] = DrillRecord().save()
+
+    # Save the new drill session history as a JSON file.
+    with open('new_session.json', 'w') as f:
+        json.dump(new_session, f)
+
+
 if __name__ == "__main__":
     pars = argparse.ArgumentParser(description="Kanji Tools")
     pars.add_argument('-k', '--kanji', help="Kanji CSV file to load", default="kanji.csv")
@@ -461,6 +508,9 @@ if __name__ == "__main__":
     uni_parser = subp.add_parser('uni', help="Show the unicode for a character or list of characters")
     uni_parser.add_argument('kanji')
     uni_parser.set_defaults(func=run_cmd_uni)
+
+    convert_parser = subp.add_parser('convert', help="Convert old-style session file to new-style")
+    convert_parser.set_defaults(func=run_cmd_convert)
 
     args = pars.parse_args()
     args.func(args)
