@@ -470,8 +470,12 @@ def run_cmd_convert(args):
         if not phrase:
             continue
 
-        # Otherwise add the 'on' drill results.
-        new_session["on"][kanji + '-' + phrase] = results.phrase2on.save()
+        # Otherwise add the 'on' drill results. These keys encode both
+        # the kanji and the phrase, separated by a dash '-'.
+        if kanji in new_session["on"]:
+            new_session["on"][kanji][phrase] = results.phrase2on.save()
+        else:
+            new_session["on"][kanji] = {phrase: results.phrase2on.save()}
 
         # Currently, there are no reading drill results, but save
         # placeholders.
