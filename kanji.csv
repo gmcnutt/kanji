@@ -224,7 +224,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 223,223,7de8,compilation,15,hen,1966,"7de8,96c6",henshuu,editing
 224,224,504f,partial,11,hen,1964,"504f,898b",henken,bias
 225,225,904d,everywhere,12,hen,1965,"666e,904d",fuhen,universal
-226,226,6148,mercy,13,ji,1490,"6148,611b",jiai,"kindeness and love"
+226,226,6148,mercy,13,ji,1490,"6148,611b",jiai,"kindness and love"
 227,227,78c1,magnet,14,ji,1491,"78c1,6c17",jiki,magnetism
 228,228,6ecb,nourishing,12,ji,1489,"6ecb,990a",jiyou,nourishment
 229,229,5ef7,courts,7,tei,547,"51fa,5ef7",shuttei,"appearance in court"
@@ -300,7 +300,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 299,299,8ae6,renunciation,16,tei,467,"8ae6,89b3",teikan,"resignation (to)"
 300,300,7de0,tighten,15,tei,1440,"7de0,7d50",teiketsu,"conclusion (of a treaty, contract)"
 301,301,8db3,leg,7,soku,1372,"4e0d,8db3",fusoku,insufficiency
-302,302,4fc3,stimulate,8,soku,1373,"4fc3,9032",sokushin,"promotion;facilitation"
+302,302,4fc3,stimulate,9,soku,1373,"4fc3,9032",sokushin,"promotion;facilitation"
 303,303,6349,nab,10,soku,1374,"6355,6349",hosoku,"capture;apprehension"
 304,304,82d7,seedling,8,byou,249,"7a2e,82d7",shubyou,"seeds and seedlings"
 305,305,63cf,sketch,11,byou,723,"70b9,63cf",tenbyou,"a sketch;profile"
@@ -419,7 +419,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 418,418,61d0,pocket,16,kai,891,"8ff0,61d0",jukkai,reminiscences
 419,419,8cab,pierce,11,kan,106,"8cab,901a",kentsuu,piercing;penetration
 420,420,6163,accustomed,14,kan,674,"7fd2,6163",shuuken,custom;habit;convention
-421,421,63db,interchange,12,kan,1122,"4ea4,63db",kouken,interchange;exchange
+421,421,63db,interchange,12,kan,1122,"4ea4,63db",koukan,interchange;exchange
 422,422,559a,yell,12,kan,1121,"53ec,559a",shouken,summons
 423,423,9084,send back,16,kan,900,"9084,5143",kangen,reduction
 424,424,74b0,ring,17,kan,899,"5faa,74b0",junkan,cycle;rotation
