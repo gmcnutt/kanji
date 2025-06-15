@@ -16,6 +16,15 @@ FMT = '%Y-%m-%d'
 TODAYSTR = TODAY.strftime(FMT)
 
 
+def build_kanji_table(cards):
+    # FIXME: obsolete?
+    table = {}
+    for pk, card in cards.items():
+        kanji = card["unicode"]
+        table[kanji] = card
+    return table
+
+
 class DrillRecord(object):
     """Track drill results for a single question."""
     def __init__(self, streak=0, last=TODAYSTR):
@@ -96,7 +105,8 @@ class Drill(object):
                 cprint(f"ok {dr.streak}x", "green", attrs=["bold"])
             else:
                 dr.streak = 0
-                cprint(f"fail (R-{card['rk2']}/{card['rk1']})", "red", attrs=["bold"])
+                cprint(f"fail (R-{card['rk2']}/{card['rk1']})", "red",
+                       attrs=["bold"])
                 fails.append(card)
             dr.last = TODAYSTR
 
@@ -128,7 +138,7 @@ class WritingDrill(Drill):
         instr2 = 'correct? <y/n>'
         prompt(f'({i+1}/{total}) {colored(card["meaning"], attrs=["bold"]):16} {colored(instr1, "yellow")}')
         backspace(instr1)
-        ok = prompt(f' {colored(card["unicode"], "cyan", attrs=["bold"])} ({card["strokes"]}) {colored(instr2, "yellow")}')
+        ok = prompt(f' {colored(card["unicode"],"cyan", attrs=["bold"])} ({card["strokes"]}) {colored(instr2, "yellow")}')
         backspace(instr2)
         return ok == 'y'
 
@@ -245,16 +255,11 @@ def dump_entry(d):
     on = d["on"] or '-'
     print(f'{d["rk2"]:<4} {d["unicode"]} {d["meaning"]:12} {on:<6}  {phr:<6} {phr_kana:6} {phr_eng}')
 
+
 def dump_csv(filename):
     data = load_cards(filename)
     for d in data.values():
         dump_entry(d)
-
-
-def dump(args):
-    print_range("---hiragana---", 0x3041, 0x3096)
-    print_range("---katakana---", 0x30a1, 0x30fa)
-    dump_csv(args.kanji)
 
 
 def getch():
@@ -362,7 +367,13 @@ class Session(object):
             json.dump(to_save, f)
 
 
-def review(args):
+def run_cmd_dump(args):
+    print_range("---hiragana---", 0x3041, 0x3096)
+    print_range("---katakana---", 0x30a1, 0x30fa)
+    dump_csv(args.kanji)
+
+
+def run_cmd_review(args):
     cards = load_cards(args.kanji)
     session = Session.load(args.record)
     session.update(cards)
@@ -380,7 +391,7 @@ def review(args):
     print(f'{duration}--{sec_per_card} seconds per card')
 
 
-def stats(args):
+def run_cmd_stats(args):
     """
     Print a table. Rows indicate correct writing, columns correct phrasing.
     """
@@ -415,68 +426,14 @@ def stats(args):
     print('')
 
 
-def roma(args):
+def run_cmd_roma(args):
     kana, codes = roma2hira(args.hira, return_codes=True)
     print(f'{kana} {",".join(codes)}')
 
 
-def kanji2unicode(args):
+def run_cmd_uni(args):
     for k in args.kanji:
         print(f'{k} {hex(ord(k))}')
-
-
-def build_kanji_table(cards):
-    table = {}
-    for pk, card in cards.items():
-        kanji = card["unicode"]
-        table[kanji] = card
-    return table
-
-
-def convert_session_file(args):
-    cards = load_cards(args.kanji)
-    old_session = load_session(args.record)
-    new_session = {
-        "writing": {},
-        "on": {},
-        "meaning": {},
-        "reading": {}
-    }
-
-    kanji_table = build_kanji_table(cards)
-
-    # The old session file stored the drill results for each card. For
-    # each card in the old session file...
-    for pk, results in old_session.items():
-
-        # Extract it's results for convenience.
-        card = cards[pk]
-        meaning = card["meaning"]
-        kanji = card["unicode"]
-        phrase = card["phrase"]["kanji"]
-
-        # Add this card's history to the arrays for tracking the
-        # writing and the meaning drill results. In the new format
-        # each drill has its own list of results, one result per card.
-        new_session["writing"][meaning] = results.meaning2kanji.save()
-        new_session["meaning"][kanji] = results.kanji2meaning.save()
-
-        # Some cards do not have phrases, so there are no 'on' or
-        # reading drill results. Skip these.
-        if not phrase:
-            continue
-
-        # Otherwise add the 'on' drill results.
-        new_session["on"][kanji + '-' + phrase] = results.phrase2on.save()
-
-        # Currently, there are no reading drill results, but save
-        # placeholders.
-        if all(kanji in kanji_table for kanji in phrase):
-            new_session["reading"][phrase] = DrillRecord().save()
-
-    # Save the new drill session history as a JSON file.
-    with open('new_session.json', 'w') as f:
-        json.dump(new_session, f)
 
 
 if __name__ == "__main__":
@@ -487,26 +444,23 @@ if __name__ == "__main__":
     subp = pars.add_subparsers(help="Commands", required=True)
 
     dump_parser = subp.add_parser('dump', help="Dump kana and known kanji")
-    dump_parser.set_defaults(func=dump)
+    dump_parser.set_defaults(func=run_cmd_dump)
 
     stats_parser = subp.add_parser('stats', help="Show drill stats")
-    stats_parser.set_defaults(func=stats)
+    stats_parser.set_defaults(func=run_cmd_stats)
 
     review_parser = subp.add_parser('review', help="Review cards that are due")
     review_parser.add_argument('-d', '--drillname', choices=('write', 'on', 'mean'), default='write')
     review_parser.add_argument('-l', '--limit', type=int, default=None, help='Limit the number of cards to review')
-    review_parser.set_defaults(func=review)
+    review_parser.set_defaults(func=run_cmd_review)
 
     roma_parser = subp.add_parser('roma', help="Convert romaji to hiragana")
     roma_parser.add_argument('hira')
-    roma_parser.set_defaults(func=roma)
+    roma_parser.set_defaults(func=run_cmd_roma)
 
     uni_parser = subp.add_parser('uni', help="Show the unicode for a character or list of characters")
     uni_parser.add_argument('kanji')
-    uni_parser.set_defaults(func=kanji2unicode)
-
-    convert_parser = subp.add_parser('convert', help="Convert old-style session file to new-style")
-    convert_parser.set_defaults(func=convert_session_file)
+    uni_parser.set_defaults(func=run_cmd_uni)
 
     args = pars.parse_args()
     args.func(args)
