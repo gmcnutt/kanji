@@ -3,10 +3,20 @@
 import argparse
 import csv
 import json
+import math
+from collections import defaultdict
+from datetime import datetime, timedelta
 from pony import orm
 
 import models
 from kana import decode, decode_phrase, roma2kata, roma2hira, NotKanaError
+
+
+AGE_FACTOR = 1.6
+TODAY = datetime.today()
+FMT = '%Y-%m-%d'
+TODAYSTR = TODAY.strftime(FMT)
+
 
 class UserNotFoundError(Exception):
     pass
@@ -14,7 +24,11 @@ class UserNotFoundError(Exception):
 
 def create_or_update(model, obj, **args):
     if obj is None:
-        obj = model(**args)
+        try:
+            obj = model(**args)
+        except orm.core.CacheIndexError as exc:
+            import pdb; pdb.set_trace()
+            raise
     else:
         for k, v in args.items():
             setattr(obj, k, v)
@@ -105,7 +119,7 @@ def run_cmd_load(args):
                     romaji=on_romaji,
                     kana=on_kata
                 )
-        
+
 
 def run_cmd_users(args):
     db = models.init(args.database_filename)
@@ -122,15 +136,87 @@ def run_cmd_users_add(args):
 
 
 def run_cmd_users_import(args):
+    # For importing old history file from previous version of the
+    # program. Should not need once every thing is setup and working
+    # again on this version.
     db = models.init(args.database_filename)
     with open(args.jsonfile) as f:
-        data = json.load(f)
+        history = json.load(f)
     with orm.db_session:
         user = models.User.get(name=args.username)
         if not user:
             raise UserNotFoundError(f"User with name '{args.username}' not found")
+        for k, v in history['writing'].items():
+            kanji = models.Kanji.get(mnemonic_meaning=k)
+            models.WritingQuizResult(
+                user=user, streak=v[0], last_date=v[1], kanji=kanji
+            )
+        for k, v in history['meaning'].items():
+            kanji = models.Kanji.get(unicode=k)
+            models.MeaningQuizResult(
+                user=user, streak=v[0], last_date=v[1], kanji=kanji
+            )
+        for k, v in history['on'].items():
+            kanji = models.Kanji.get(unicode=k)
+            for k2, v2 in v.items():
+                phrase = models.Phrase.get(unicode=k2)
+                reading = models.Reading.get(kanji=kanji, phrase=phrase)
+                models.ReadingQuizResult(
+                    user=user, streak=v2[0], last_date=v2[1], reading=reading
+                )
 
-    
+
+def get_days_until_due(quiz_result):
+    age = TODAY - quiz_result.last_date
+    days_to_wait = math.ceil(quiz_result.streak * AGE_FACTOR)
+    days_until_due = days_to_wait - age.days
+    return max(0, days_until_due)
+
+
+def run_cmd_stats(args):
+    db = models.init(args.database_filename)
+
+    writing_sched = defaultdict(int)
+    reading_sched = defaultdict(int)
+    meaning_sched = defaultdict(int)
+
+    with orm.db_session:
+        user = models.User.get(name=args.username)
+        if not user:
+            raise UserNotFoundError(f"User with name '{args.username}' not found")
+        for result in models.WritingQuizResult.select(user=user):
+            writing_sched[get_days_until_due(result)] += 1
+        for result in models.ReadingQuizResult.select(user=user):
+            reading_sched[get_days_until_due(result)] += 1
+        for result in models.MeaningQuizResult.select(user=user):
+            meaning_sched[get_days_until_due(result)] += 1
+
+    # Find the maximum day across all schedules
+    max_day = max(
+        max(writing_sched.keys(), default=-1),
+        max(reading_sched.keys(), default=-1),
+        max(meaning_sched.keys(), default=-1)
+    ) + 1  # Add 1 to include the max day in range
+
+    # Print the schedules
+    print('Writing Due: ', end='')
+    for x in range(max_day):
+        print(f'{writing_sched[x]} ', end='')
+    print('')
+
+    print('     On Due: ', end='')
+    for x in range(max_day):
+        print(f'{reading_sched[x]} ', end='')
+    print('')
+
+    print('Meaning Due: ', end='')
+    for x in range(max_day):
+        print(f'{meaning_sched[x]} ', end='')
+    print('')
+
+
+
+
 if __name__ == "__main__":
 
     pars = argparse.ArgumentParser(description="Kanji Learning Drills")
@@ -155,7 +241,7 @@ if __name__ == "__main__":
         default="kanji.csv"
     )
     load_parser.set_defaults(func=run_cmd_load)
-    
+
     users_parser = subp.add_parser('users', help='Commands to manage users')
     users_parser.set_defaults(func=run_cmd_users)
     users_subp = users_parser.add_subparsers(help="User sub-commands")
@@ -169,10 +255,9 @@ if __name__ == "__main__":
     )
     users_import_parser.add_argument('jsonfile', help="JSON file with quiz history")
     users_import_parser.set_defaults(func=run_cmd_users_import)
-    
-    
-    # stats_parser = subp.add_parser('stats', help="Show drill stats")
-    # stats_parser.set_defaults(func=run_cmd_stats)
+
+    stats_parser = subp.add_parser('stats', help="Show drill stats")
+    stats_parser.set_defaults(func=run_cmd_stats)
 
     # review_parser = subp.add_parser('review', help="Review cards that are due")
     # review_parser.add_argument('-d', '--drillname', choices=('write', 'on', 'mean'), default='write')
