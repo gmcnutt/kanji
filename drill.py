@@ -289,11 +289,11 @@ def run_cmd_uni(args):
         print(f'{k} {hex(ord(k))}')
 
 
-def review_writing(user, limit, test_user, instructions):
+def run_review_loop(user, model, limit, test_user, instructions):
 
     # Get due questions
     due = []
-    results = models.WritingQuizResult.select(user=user)
+    results = model.select(user=user)
     due = [r for r in results if (0 == get_days_until_due(r))]
     if not due:
         cprint(f'{colored("Nothing due", "green")}')
@@ -337,6 +337,7 @@ def review_writing(user, limit, test_user, instructions):
 
 
 def test_user_writing(qr, i, total):
+    """Run on each kanji due for writing."""
     instr1 = '<Press any key to check>'
     instr2 = 'correct? <y/n>'
     kanji = qr.kanji
@@ -363,16 +364,38 @@ def test_user_writing(qr, i, total):
     return passed
 
 
+def test_user_meaning(qr, i, total):
+    kanji = qr.kanji
+    promptstr = f'({i+1}/{total}) {colored(kanji.unicode, "cyan", attrs=["bold"])}? '
+    r = input(promptstr)
+
+    backup = f'\033[1A'
+    sys.stdout.write(backup)
+    print(f'{promptstr}{r} ', end='')
+
+    ok = r == kanji.mnemonic_meaning
+    if not ok:
+        cprint(f"should be '{kanji.mnemonic_meaning}'", 'red', attrs=['underline'])
+    return ok
+
+
 def run_cmd_review(args):
     db = models.init(args.database_filename)
     with orm.db_session:
         user = models.User.get(name=args.username)
         if not user:
             raise UserNotFoundError(f"User with name '{args.username}' not found")
-        review_writing(
-            user, args.limit, test_user_writing,
-            'Given the meaning, write the kanji'
-        )
+
+        if args.drillname == 'write':
+            run_review_loop(
+                user, models.WritingQuizResult, args.limit, test_user_writing,
+                'Given the meaning, write the kanji'
+            )
+        elif args.drillname == 'mean':
+            run_review_loop(
+                user, models.MeaningQuizResult, args.limit, test_user_meaning,
+                'Given the kanji, type the meaning'
+            )
 
 
 if __name__ == "__main__":
