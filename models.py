@@ -37,7 +37,7 @@ class Reading(db.Entity):
 
 class ReadingQuizResult(db.Entity):
     id = PrimaryKey(int, auto=True)
-    student = Required('Student')
+    student = Required('User')
     streak = Optional(int)
     last_date = Optional(date)
     reading = Required(Reading)
@@ -45,7 +45,7 @@ class ReadingQuizResult(db.Entity):
 
 class WritingQuizResult(db.Entity):
     id = PrimaryKey(int, auto=True)
-    student = Required('Student')
+    student = Required('User')
     streak = Optional(int)
     last_date = Optional(date)
     kanji = Required(Kanji)
@@ -53,13 +53,13 @@ class WritingQuizResult(db.Entity):
 
 class MeaningQuizResult(db.Entity):
     id = PrimaryKey(int, auto=True)
-    student = Required('Student')
+    student = Required('User')
     streak = Optional(int)
     last_date = Optional(date)
     kanji = Required(Kanji)
 
 
-class Student(db.Entity):
+class User(db.Entity):
     id = PrimaryKey(int, auto=True)
     name = Optional(str)
     meaning_quiz_result = Optional(MeaningQuizResult)
@@ -70,7 +70,7 @@ class Student(db.Entity):
 
 class VocabQuizResult(db.Entity):
     id = PrimaryKey(int, auto=True)
-    student = Required(Student)
+    student = Required(User)
     streak = Optional(int)
     last_date = Optional(date)
     phrase = Required(Phrase)
