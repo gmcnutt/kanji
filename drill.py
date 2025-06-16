@@ -8,6 +8,15 @@ import models
 from kana import decode, decode_phrase, roma2kata, roma2hira, NotKanaError
 
 
+def create_or_update(model, obj, **args):
+    if obj is None:
+        model(**args)
+    else:
+        for k, v in args.items():
+            setattr(obj, k, v)
+    return obj
+
+
 @orm.db_session
 def load_kanji_and_phrases_from_csv(db, filename):
     """Create the kanji and phrase objects from the CSV file.
@@ -22,32 +31,49 @@ def load_kanji_and_phrases_from_csv(db, filename):
         r = csv.reader(f)
         header = next(r)
         for line in r:
-            (pk, rk2, unicode, mnemonic_meaning, stroke_count, on,
+            (pk, rk2, unicode, mnemonic_meaning, stroke_count, on_romaji,
              heisig_v1_frame, phr,phr_kana,phr_eng) = line
             unicode = decode(unicode)
-            on = roma2kata(on) or None
+            on_kata = roma2kata(on_romaji) or None
             phr = decode_phrase(phr) if phr else None
             phr_kana = roma2hira(phr_kana)
 
-            # If the kanji has not been created yet...
-            kanji = models.Kanji.get(unicode=unicode)
-            if kanji is None:
-                # Create it now
-                models.Kanji(
-                    unicode=unicode,
-                    mnemonic_meaning=mnemonic_meaning,
-                    heisig_v1_frame=heisig_v1_frame,
-                    stroke_count=stroke_count
-                )
-            else:
-                # Else ensure it is up to date
-                kanji.unicode = unicode
-                kanji.mnemonic_meaning = mnemonic_meaning
-                kanji.heisig_v1_frame = heisig_v1_frame
-                kanji.stroke_count = stroke_count
 
-            # If the reading has not been created yet...
-                    
+            # Create/update the kanji
+            kanji = models.Kanji.get(unicode=unicode)
+            kanji = create_or_update(
+                models.Kanji,
+                kanji,
+                unicode=unicode,
+                mnemonic_meaning=mnemonic_meaning,
+                heisig_v1_frame=heisig_v1_frame,
+                stroke_count=stroke_count
+            )
+
+            # Some kanji have no reading and hence no phrase
+            if not phr:
+                continue
+
+            # Create/update the phrase and reading
+            phrase = models.Phrase.get(unicode=phr)
+            phrase = create_or_update(
+                models.Phrase,
+                phrase,
+                unicode=phr,
+                meaning=phr_eng,
+                hiragana=phr_kana
+            )
+
+            reading = models.Reading.get(kanji=kanji, phrase=phrase)
+            reading = create_or_update(
+                models.Reading,
+                reading,
+                kanji=kanji,
+                phrase=phrase,
+                heisig_v2_frame=rk2,
+                romaji=on_romaji,
+                kana=on_kata
+            )
 
 def dump_unicode_range(title, start, end):
     columns = 8
@@ -68,11 +94,19 @@ def run_cmd_dump(args):
     dump_unicode_range("---katakana---", 0x30a1, 0x30fa)
     db = models.init(args.database_filename)
     load_kanji_and_phrases_from_csv(db, args.kanji)
-    print("---kanji---")
     with orm.db_session:
+        print("---kanji---")
         kanjis = models.Kanji.select()
         for kanji in kanjis:
             print(f'{kanji.unicode} {kanji.mnemonic_meaning:16} R1-{kanji.heisig_v1_frame}')
+        print("---phrases---")
+        phrases = models.Phrase.select()
+        for phrase in phrases:
+            print(f'{phrase.unicode:6} {phrase.hiragana:16} {phrase.meaning}')
+        print("---readings---")
+        readings = models.Reading.select()
+        for reading in readings:
+            print(f'{reading.kanji.unicode} in {reading.phrase.unicode} is {reading.kana} ({reading.romaji})')
 
 
 if __name__ == "__main__":

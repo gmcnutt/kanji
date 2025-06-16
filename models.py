@@ -18,7 +18,7 @@ class Kanji(db.Entity):
 
 class Phrase(db.Entity):
     id = PrimaryKey(int, auto=True)
-    unicode = Required(str)
+    unicode = Required(str, unique=True)
     meaning = Optional(str)
     hiragana = Optional(str)
     readings = Set('Reading')
