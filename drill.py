@@ -28,8 +28,9 @@ def load_kanji_and_phrases_from_csv(db, filename):
             on = roma2kata(on) or None
             phr = decode_phrase(phr) if phr else None
             phr_kana = roma2hira(phr_kana)
-            kanji = models.Kanji.get(unicode=unicode)
+
             # If the kanji has not been created yet...
+            kanji = models.Kanji.get(unicode=unicode)
             if kanji is None:
                 # Create it now
                 models.Kanji(
@@ -44,6 +45,8 @@ def load_kanji_and_phrases_from_csv(db, filename):
                 kanji.mnemonic_meaning = mnemonic_meaning
                 kanji.heisig_v1_frame = heisig_v1_frame
                 kanji.stroke_count = stroke_count
+
+            # If the reading has not been created yet...
                     
 
 def dump_unicode_range(title, start, end):
@@ -60,26 +63,16 @@ def dump_unicode_range(title, start, end):
         print(" | ".join(entries))
 
 
-def dump_entry(d):
-    phr = d["phrase"]["kanji"] or '-'
-    phr_kana = d["phrase"]["kana"] or '-'
-    phr_eng =  d["phrase"]["meaning"] or '-'
-    on = d["on"] or '-'
-    print(f'{d["rk2"]:<4} {d["unicode"]} {d["meaning"]:12} {on:<6}  {phr:<6} {phr_kana:6} {phr_eng}')
-
-
-@orm.db_session()
-def dump_csv(db, filename):
-    data = load_kanji_and_phrases_from_csv(db, filename)
-    kanjis = models.Kanji.select()
-    for kanji in kanjis:
-        print(f'{kanji.unicode} {kanji.mnemonic_meaning:16} R1-{kanji.heisig_v1_frame}')
-
 def run_cmd_dump(args):
     dump_unicode_range("---hiragana---", 0x3041, 0x3096)
     dump_unicode_range("---katakana---", 0x30a1, 0x30fa)
     db = models.init(args.database_filename)
-    dump_csv(db, args.kanji)
+    load_kanji_and_phrases_from_csv(db, args.kanji)
+    print("---kanji---")
+    with orm.db_session:
+        kanjis = models.Kanji.select()
+        for kanji in kanjis:
+            print(f'{kanji.unicode} {kanji.mnemonic_meaning:16} R1-{kanji.heisig_v1_frame}')
 
 
 if __name__ == "__main__":

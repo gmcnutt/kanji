@@ -8,7 +8,6 @@ db = Database()
 class Kanji(db.Entity):
     id = PrimaryKey(int, auto=True)
     unicode = Required(str, unique=True)
-    phrase_kanjis = Set('PhraseKanji')
     readings = Set('Reading')
     mnemonic_meaning = Required(str)
     heisig_v1_frame = Optional(int)
@@ -19,18 +18,11 @@ class Kanji(db.Entity):
 
 class Phrase(db.Entity):
     id = PrimaryKey(int, auto=True)
+    unicode = Required(str)
     meaning = Optional(str)
     hiragana = Optional(str)
-    phrase_kanjis = Set('PhraseKanji')
     readings = Set('Reading')
     vocab_quiz_results = Set('VocabQuizResult')
-
-
-class PhraseKanji(db.Entity):
-    id = PrimaryKey(int, auto=True)
-    position = Optional(int)
-    kanji = Required(Kanji)
-    phrase = Required(Phrase)
 
 
 class Reading(db.Entity):
