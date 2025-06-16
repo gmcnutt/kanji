@@ -215,6 +215,15 @@ def run_cmd_stats(args):
     print('')
 
 
+def run_cmd_roma2hira(args):
+    kana, codes = roma2hira(args.roma, return_codes=True)
+    print(f'{kana} {",".join(codes)}')
+
+
+def run_cmd_uni(args):
+    for k in args.kanji:
+        print(f'{k} {hex(ord(k))}')
+
 
 
 if __name__ == "__main__":
@@ -259,21 +268,22 @@ if __name__ == "__main__":
     stats_parser = subp.add_parser('stats', help="Show drill stats")
     stats_parser.set_defaults(func=run_cmd_stats)
 
+    roma_parser = subp.add_parser('roma2hira', help="Convert romaji to hiragana")
+    roma_parser.add_argument('roma')
+    roma_parser.set_defaults(func=run_cmd_roma2hira)
+
+    uni_parser = subp.add_parser(
+        'unicode',
+        help="Show the unicode for a character or list of characters"
+    )
+    uni_parser.add_argument('kanji')
+    uni_parser.set_defaults(func=run_cmd_uni)
+
     # review_parser = subp.add_parser('review', help="Review cards that are due")
     # review_parser.add_argument('-d', '--drillname', choices=('write', 'on', 'mean'), default='write')
     # review_parser.add_argument('-l', '--limit', type=int, default=None, help='Limit the number of cards to review')
     # review_parser.set_defaults(func=run_cmd_review)
 
-    # roma_parser = subp.add_parser('roma', help="Convert romaji to hiragana")
-    # roma_parser.add_argument('hira')
-    # roma_parser.set_defaults(func=run_cmd_roma)
-
-    # uni_parser = subp.add_parser('uni', help="Show the unicode for a character or list of characters")
-    # uni_parser.add_argument('kanji')
-    # uni_parser.set_defaults(func=run_cmd_uni)
-
-    # convert_parser = subp.add_parser('convert', help="Convert old-style session file to new-style")
-    # convert_parser.set_defaults(func=run_cmd_convert)
 
     args = pars.parse_args()
 
