@@ -38,30 +38,30 @@ class Reading(db.Entity):
 class ReadingQuizResult(db.Entity):
     id = PrimaryKey(int, auto=True)
     user = Required('User')
-    streak = Optional(int)
-    last_date = Optional(datetime)
+    streak = Optional(int, default=0)
+    last_date = Optional(datetime, default=lambda: datetime.now())
     reading = Required(Reading)
 
 
 class WritingQuizResult(db.Entity):
     id = PrimaryKey(int, auto=True)
     user = Required('User')
-    streak = Optional(int)
-    last_date = Optional(datetime)
+    streak = Optional(int, default=0)
+    last_date = Optional(datetime, default=lambda: datetime.now())
     kanji = Required(Kanji)
 
 
 class MeaningQuizResult(db.Entity):
     id = PrimaryKey(int, auto=True)
     user = Required('User')
-    streak = Optional(int)
-    last_date = Optional(datetime)
+    streak = Optional(int, default=0)
+    last_date = Optional(datetime, default=lambda: datetime.now())
     kanji = Required(Kanji)
 
 
 class User(db.Entity):
     id = PrimaryKey(int, auto=True)
-    name = Optional(str)
+    name = Optional(str, unique=True)
     meaning_quiz_result = Set(MeaningQuizResult)
     writing_quiz_result = Set(WritingQuizResult)
     reading_quiz_result = Set(ReadingQuizResult)
@@ -71,8 +71,8 @@ class User(db.Entity):
 class VocabQuizResult(db.Entity):
     id = PrimaryKey(int, auto=True)
     user = Required(User)
-    streak = Optional(int)
-    last_date = Optional(datetime)
+    streak = Optional(int, default=0)
+    last_date = Optional(datetime, default=lambda: datetime.now())
     phrase = Required(Phrase)
 
 

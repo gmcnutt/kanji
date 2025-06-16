@@ -4,9 +4,12 @@ import argparse
 import csv
 import json
 import math
+import random
 from collections import defaultdict
 from datetime import datetime, timedelta
 from pony import orm
+import sys, tty, termios
+from termcolor import colored, cprint
 
 import models
 from kana import decode, decode_phrase, roma2kata, roma2hira, NotKanaError
@@ -22,13 +25,37 @@ class UserNotFoundError(Exception):
     pass
 
 
+class DuplicateError(Exception):
+    pass
+
+
+def getch():
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+    return ch
+
+
+def prompt(str):
+    print(str, end='', flush=True)
+    return getch()
+
+
+def backspace(str):
+    x = '\b' * len(str)
+    sys.stdout.write(x)
+    y = ' ' * len(str)
+    sys.stdout.write(y)
+    sys.stdout.write(x)
+
+
 def create_or_update(model, obj, **args):
     if obj is None:
-        try:
-            obj = model(**args)
-        except orm.core.CacheIndexError as exc:
-            import pdb; pdb.set_trace()
-            raise
+        obj = model(**args)
     else:
         for k, v in args.items():
             setattr(obj, k, v)
@@ -47,6 +74,27 @@ def dump_unicode_range(title, start, end):
             if index > end:
                 break
         print(" | ".join(entries))
+
+
+def get_days_until_due(quiz_result):
+    age = TODAY - quiz_result.last_date
+    days_to_wait = math.ceil(quiz_result.streak * AGE_FACTOR)
+    days_until_due = days_to_wait - age.days
+    return max(0, days_until_due)
+
+
+def add_missing_quiz_results(user):
+    for kanji in models.Kanji.select():
+        qr = models.WritingQuizResult.get(kanji=kanji, user=user)
+        if not qr:
+            models.WritingQuizResult(user=user, kanji=kanji, last_date=TODAY)
+        qr = models.MeaningQuizResult.get(kanji=kanji, user=user)
+        if not qr:
+            models.MeaningQuizResult(user=user, kanji=kanji, last_date=TODAY)
+    for reading in models.Reading.select():
+        qr = models.ReadingQuizResult.get(user=user, reading=reading)
+        if not qr:
+            models.ReadingQuizResult(user=user, reading=reading)
 
 
 def run_cmd_dump(args):
@@ -108,7 +156,6 @@ def run_cmd_load(args):
                     hiragana=phr_kana
                 )
 
-                #import pdb; pdb.set_trace()
                 reading = models.Reading.get(kanji=kanji, phrase=phrase)
                 reading = create_or_update(
                     models.Reading,
@@ -119,6 +166,8 @@ def run_cmd_load(args):
                     romaji=on_romaji,
                     kana=on_kata
                 )
+        for user in models.User.select():
+            add_missing_quiz_results(user)
 
 
 def run_cmd_users(args):
@@ -132,7 +181,22 @@ def run_cmd_users(args):
 def run_cmd_users_add(args):
     db = models.init(args.database_filename)
     with orm.db_session:
-        models.User(name=args.username)
+        user = models.User.get(name=args.username)
+        if user:
+            raise DuplicateError(f"User '{user.name}' already exists")
+        user = models.User(name=args.username)
+        add_missing_quiz_results(user)
+
+
+def run_cmd_users_del(args):
+    db = models.init(args.database_filename)
+    with orm.db_session:
+        user = models.User.get(name=args.username)
+        if user:
+            user.delete()
+        else:
+            raise UserNotFoundError(f"User with name '{args.username}' not found")
+
 
 
 def run_cmd_users_import(args):
@@ -148,12 +212,16 @@ def run_cmd_users_import(args):
             raise UserNotFoundError(f"User with name '{args.username}' not found")
         for k, v in history['writing'].items():
             kanji = models.Kanji.get(mnemonic_meaning=k)
-            models.WritingQuizResult(
+            qr = models.WritingQuizResult.get(user=user, kanji=kanji)
+            create_or_update(
+                models.WritingQuizResult, qr,
                 user=user, streak=v[0], last_date=v[1], kanji=kanji
             )
         for k, v in history['meaning'].items():
             kanji = models.Kanji.get(unicode=k)
-            models.MeaningQuizResult(
+            qr = models.MeaningQuizResult.get(user=user, kanji=kanji)
+            create_or_update(
+                models.MeaningQuizResult, qr,
                 user=user, streak=v[0], last_date=v[1], kanji=kanji
             )
         for k, v in history['on'].items():
@@ -161,16 +229,11 @@ def run_cmd_users_import(args):
             for k2, v2 in v.items():
                 phrase = models.Phrase.get(unicode=k2)
                 reading = models.Reading.get(kanji=kanji, phrase=phrase)
-                models.ReadingQuizResult(
+                qr = models.ReadingQuizResult.get(user=user, reading=reading)
+                create_or_update(
+                    models.ReadingQuizResult, qr,
                     user=user, streak=v2[0], last_date=v2[1], reading=reading
                 )
-
-
-def get_days_until_due(quiz_result):
-    age = TODAY - quiz_result.last_date
-    days_to_wait = math.ceil(quiz_result.streak * AGE_FACTOR)
-    days_until_due = days_to_wait - age.days
-    return max(0, days_until_due)
 
 
 def run_cmd_stats(args):
@@ -184,6 +247,7 @@ def run_cmd_stats(args):
         user = models.User.get(name=args.username)
         if not user:
             raise UserNotFoundError(f"User with name '{args.username}' not found")
+        add_missing_quiz_results(user)
         for result in models.WritingQuizResult.select(user=user):
             writing_sched[get_days_until_due(result)] += 1
         for result in models.ReadingQuizResult.select(user=user):
@@ -204,7 +268,7 @@ def run_cmd_stats(args):
         print(f'{writing_sched[x]} ', end='')
     print('')
 
-    print('     On Due: ', end='')
+    print('Reading Due: ', end='')
     for x in range(max_day):
         print(f'{reading_sched[x]} ', end='')
     print('')
@@ -225,6 +289,91 @@ def run_cmd_uni(args):
         print(f'{k} {hex(ord(k))}')
 
 
+def review_writing(user, limit, test_user, instructions):
+
+    # Get due questions
+    due = []
+    results = models.WritingQuizResult.select(user=user)
+    due = [r for r in results if (0 == get_days_until_due(r))]
+    if not due:
+        cprint(f'{colored("Nothing due", "green")}')
+        return 0
+
+    # Randomize and limit the list of questions
+    random.shuffle(due)
+    available = len(due)
+    if limit:
+        due = due[:limit]
+    total = len(due)
+    cprint(f'Reviewing ({total}/{available} cards)', "yellow")
+    cprint(instructions, "yellow")
+    fails = []
+
+    # Ask the questions and track failures. Update the quiz results.
+    for i, qr in enumerate(due):
+        if test_user(qr, i, total):
+            qr.streak += 1
+            cprint(f"ok {qr.streak}", "green", attrs=["bold"])
+        else:
+            qr.streak = 0
+            fails.append(qr)
+        qr.last_date = TODAYSTR
+
+    num_correct = total - len(fails)
+    percent = round(num_correct * 100 / total)
+    cprint(f'You passed {num_correct}/{total} cards ({percent}%)', "green")
+
+    # Review failures.
+    while fails:
+        failed = len(fails)
+        cprint(f"Reviewing failures ({failed} cards)", "yellow")
+        refails = []
+        for i, qr in enumerate(fails):
+            if not test_user(qr, i, failed):
+                refails.append(qr)
+            print()
+        fails = refails
+    return total
+
+
+def test_user_writing(qr, i, total):
+    instr1 = '<Press any key to check>'
+    instr2 = 'correct? <y/n>'
+    kanji = qr.kanji
+    question = kanji.mnemonic_meaning
+    answer = kanji.unicode
+
+    # Show the mnemonic meaning and prompt the user to write the answer.
+    prompt(
+        f'({i+1}/{total}) {colored(question, attrs=["bold"]):16} {colored(instr1, "yellow")}'
+    )
+
+    # Ask the user if he wrote it correctly.
+    backspace(instr1)
+    ok = prompt(
+        f' {colored(answer,"cyan", attrs=["bold"])} ({kanji.stroke_count}) {colored(instr2, "yellow")}'
+    )
+    backspace(instr2)
+    passed = ok == 'y'
+
+    # If not, show the frame number in the Heisig Volume 1 book
+    if not passed:
+        cprint(f"fail (R1-{kanji.heisig_v1_frame})", "red", attrs=["bold"])
+
+    return passed
+
+
+def run_cmd_review(args):
+    db = models.init(args.database_filename)
+    with orm.db_session:
+        user = models.User.get(name=args.username)
+        if not user:
+            raise UserNotFoundError(f"User with name '{args.username}' not found")
+        review_writing(
+            user, args.limit, test_user_writing,
+            'Given the meaning, write the kanji'
+        )
+
 
 if __name__ == "__main__":
 
@@ -235,7 +384,6 @@ if __name__ == "__main__":
     pars.add_argument(
         "-u", "--username", help="User the session is for", default="gmcnutt"
     )
-
 
     subp = pars.add_subparsers(help="Commands", required=True)
 
@@ -259,6 +407,10 @@ if __name__ == "__main__":
     users_add_parser.add_argument('username', help='Username to assign user')
     users_add_parser.set_defaults(func=run_cmd_users_add)
 
+    users_del_parser = users_subp.add_parser('del', help='Delete an existing user')
+    users_del_parser.add_argument('username', help='Username to delete')
+    users_del_parser.set_defaults(func=run_cmd_users_del)
+
     users_import_parser = users_subp.add_parser(
         'import', help="Import a user's quiz history"
     )
@@ -279,15 +431,20 @@ if __name__ == "__main__":
     uni_parser.add_argument('kanji')
     uni_parser.set_defaults(func=run_cmd_uni)
 
-    # review_parser = subp.add_parser('review', help="Review cards that are due")
-    # review_parser.add_argument('-d', '--drillname', choices=('write', 'on', 'mean'), default='write')
-    # review_parser.add_argument('-l', '--limit', type=int, default=None, help='Limit the number of cards to review')
-    # review_parser.set_defaults(func=run_cmd_review)
+    review_parser = subp.add_parser('review', help="Review cards that are due")
+    review_parser.add_argument(
+        '-d', '--drillname', choices=('write', 'on', 'mean'), default='write'
+    )
+    review_parser.add_argument(
+        '-l', '--limit', type=int, default=None,
+        help='Limit the number of cards to review'
+    )
+    review_parser.set_defaults(func=run_cmd_review)
 
 
     args = pars.parse_args()
 
     try:
         args.func(args)
-    except UserNotFoundError as exc:
+    except (UserNotFoundError, DuplicateError) as exc:
         print(exc)
