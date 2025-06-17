@@ -198,7 +198,6 @@ def run_cmd_users_del(args):
             raise UserNotFoundError(f"User with name '{args.username}' not found")
 
 
-
 def run_cmd_users_import(args):
     # For importing old history file from previous version of the
     # program. Should not need once every thing is setup and working
@@ -375,7 +374,34 @@ def test_user_meaning(qr, i, total):
 
     ok = r == kanji.mnemonic_meaning
     if not ok:
-        cprint(f"should be '{kanji.mnemonic_meaning}'", 'red', attrs=['underline'])
+        cprint(f"should be '{kanji.mnemonic_meaning}' ", 'red', attrs=['underline'], end='')
+        cprint(f"fail (R1-{kanji.heisig_v1_frame})", "red", attrs=["bold"])
+    return ok
+
+
+def test_user_reading(qr, i, total):
+    reading = qr.reading
+    kanji = reading.kanji
+    phrase = reading.phrase
+    promptstr = f'({i+1}/{total}) {colored(kanji.unicode, "cyan", attrs=["bold"])} in {colored(phrase.unicode, "cyan")}? '
+    r = input(promptstr)
+    backup = f'\033[1A'
+    sys.stdout.write(backup)
+    print(f'{promptstr}\b\b ', end='')
+    if r:
+        try:
+            on = roma2kata(r)
+        except (KeyError, NotKanaError):
+            on = '<invalid>'
+    else:
+        on = '?'
+    ok = on == reading.kana
+    if ok:
+        cprint(f'{on} ', "green", end='')
+    else:
+        cprint(f'{colored(on, "red")} should be {reading.kana} ({reading.romaji}) ', end='')
+        cprint(f'in {colored(phrase.unicode, "light_grey")} ({phrase.meaning}) ', end='')
+        cprint(f"fail (R2-{reading.heisig_v2_frame})", "red", attrs=["bold"])
     return ok
 
 
@@ -396,7 +422,11 @@ def run_cmd_review(args):
                 user, models.MeaningQuizResult, args.limit, test_user_meaning,
                 'Given the kanji, type the meaning'
             )
-
+        elif args.drillname == 'read':
+            run_review_loop(
+                user, models.ReadingQuizResult, args.limit, test_user_reading,
+                'Given the kanji and the phrase, type the "on" in romaji'
+            )
 
 if __name__ == "__main__":
 
@@ -456,7 +486,7 @@ if __name__ == "__main__":
 
     review_parser = subp.add_parser('review', help="Review cards that are due")
     review_parser.add_argument(
-        '-d', '--drillname', choices=('write', 'on', 'mean'), default='write'
+        '-d', '--drillname', choices=('write', 'read', 'mean'), default='write'
     )
     review_parser.add_argument(
         '-l', '--limit', type=int, default=None,
