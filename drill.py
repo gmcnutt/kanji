@@ -374,8 +374,9 @@ def test_user_meaning(qr, i, total):
 
     ok = r == kanji.mnemonic_meaning
     if not ok:
-        cprint(f"should be '{kanji.mnemonic_meaning}' ", 'red', attrs=['underline'], end='')
-        cprint(f"fail (R1-{kanji.heisig_v1_frame})", "red", attrs=["bold"])
+        cprint(f"should be ", 'red', end='')
+        cprint(f"{kanji.mnemonic_meaning}", 'red', attrs=['underline'], end='')
+        cprint(f" fail (R1-{kanji.heisig_v1_frame})", "red", attrs=["bold"])
     return ok
 
 
@@ -398,9 +399,11 @@ def test_user_reading(qr, i, total):
     ok = on == reading.kana
     if ok:
         cprint(f'{on} ', "green", end='')
+        cprint(f'in {colored(phrase.hiragana, "light_grey")} ({phrase.meaning}) ', end='')
     else:
-        cprint(f'{colored(on, "red")} should be {reading.kana} ({reading.romaji}) ', end='')
-        cprint(f'in {colored(phrase.unicode, "light_grey")} ({phrase.meaning}) ', end='')
+        cprint(f'{colored(on, "red")} should be {colored(reading.kana, "magenta")} (', end='')
+        cprint(f'{reading.romaji}', attrs=["underline"], end='')
+        cprint(f') in {colored(phrase.hiragana, "cyan")} ({phrase.meaning}) ', end='')
         cprint(f"fail (R2-{reading.heisig_v2_frame})", "red", attrs=["bold"])
     return ok
 
