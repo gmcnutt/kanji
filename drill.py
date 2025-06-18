@@ -12,7 +12,9 @@ import sys, tty, termios
 from termcolor import colored, cprint
 
 import models
-from kana import decode, decode_phrase, roma2kata, roma2hira, NotKanaError
+from kana import (decode, decode_phrase, roma2kata, roma2hira, kata2hira,
+                  NotKanaError,
+                  is_hiragana, is_kanji, is_katakana)
 
 
 AGE_FACTOR = 1.6
@@ -26,6 +28,14 @@ class UserNotFoundError(Exception):
 
 
 class DuplicateError(Exception):
+    pass
+
+
+class NotKanjiError(Exception):
+    pass
+
+
+class BadEntryError(Exception):
     pass
 
 
@@ -83,6 +93,73 @@ def get_days_until_due(quiz_result):
     return max(0, days_until_due)
 
 
+def is_knowable_phrase(phrase):
+    # Try to build the phrase's hiragana from the consituent kanji
+    # characters using known readings. Iff we can, the phrase is
+    # knowable.
+    target = phrase.hiragana
+    reading_hira = ''
+
+    # For each kanji or kana in the phrase, match it to the target
+    # prefix then chop it off the front to advance the target for the
+    # next match.
+    for c in phrase.unicode:
+
+        # For the odd case where the phrase includes katakana, convert
+        # to hiragana to check the match below.
+        if is_katakana(c):
+            c = kata2hira(c)
+            import pdb; pdb.set_trace()
+
+        # If it's hiragana that's fine. But it should match the target.
+        if is_hiragana(c):
+            if c != target[0]:
+                raise BadEntryError(f'Expected {c} as next letter in {target} for {phrase.unicode} ({phrase.hiragana})')
+            target = target[1:]
+            continue
+
+        # Check for the special iteration character which has no fixed
+        # reading. Retry the last match and advance.
+        if c == '々':
+            if not target.startswith(reading_hira):
+                raise BadEntryError(
+                    f'Found 々 but {target} does not start with "{reading_hira}" '\
+                    'for {phrase.unicode} ({phrase.hiragana})'
+                )
+            else:
+                target = target[len(reading_hira):]
+                continue
+
+        # Else it must be kanji, or bad data.
+        if not is_kanji(c):
+            raise NotKanjiError(f'{c} does not appear to be kanji but appears in {phrase.unicode} ({phrase.hiragana})')
+
+        # If the kanji is not in our database then the phrase is not
+        # knowable.
+        kanji = models.Kanji.get(unicode=c)
+        if kanji is None:
+            return False
+
+        # Find all the known readings for the kanji. Find the first
+        # one that matches the prefix of our target and advance the
+        # target. If we can't find one, the phrase is not knowable.
+        reading_hira = ''
+        found = False
+        for reading in models.Reading.select(kanji=kanji):
+            reading_hira = roma2hira(reading.romaji)
+            if target.startswith(reading_hira):
+                target = target[len(reading_hira):]
+                found = True
+                break
+
+
+        if not found:
+            #print(f"No reading for {kanji.unicode} that matches first part of {target}")
+            return False
+
+    return True
+
+
 def add_missing_quiz_results(user):
     for kanji in models.Kanji.select():
         qr = models.WritingQuizResult.get(kanji=kanji, user=user)
@@ -95,6 +172,11 @@ def add_missing_quiz_results(user):
         qr = models.ReadingQuizResult.get(user=user, reading=reading)
         if not qr:
             models.ReadingQuizResult(user=user, reading=reading)
+    for phrase in models.Phrase.select():
+        if is_knowable_phrase(phrase):
+            qr = models.VocabQuizResult.get(user=user, phrase=phrase)
+            if not qr:
+                models.VocabQuizResult(user=user, phrase=phrase)
 
 
 def run_cmd_dump(args):
@@ -241,6 +323,7 @@ def run_cmd_stats(args):
     writing_sched = defaultdict(int)
     reading_sched = defaultdict(int)
     meaning_sched = defaultdict(int)
+    vocab_sched = defaultdict(int)
 
     with orm.db_session:
         user = models.User.get(name=args.username)
@@ -253,12 +336,15 @@ def run_cmd_stats(args):
             reading_sched[get_days_until_due(result)] += 1
         for result in models.MeaningQuizResult.select(user=user):
             meaning_sched[get_days_until_due(result)] += 1
+        for result in models.VocabQuizResult.select(user=user):
+            vocab_sched[get_days_until_due(result)] += 1
 
     # Find the maximum day across all schedules
     max_day = max(
         max(writing_sched.keys(), default=-1),
         max(reading_sched.keys(), default=-1),
-        max(meaning_sched.keys(), default=-1)
+        max(meaning_sched.keys(), default=-1),
+        max(vocab_sched.keys(), default=-1)
     ) + 1  # Add 1 to include the max day in range
 
     # Print the schedules
@@ -277,6 +363,11 @@ def run_cmd_stats(args):
         print(f'{meaning_sched[x]} ', end='')
     print('')
 
+    print('  Vocab Due: ', end='')
+    for x in range(max_day):
+        print(f'{vocab_sched[x]} ', end='')
+    print('')
+
 
 def run_cmd_roma2hira(args):
     kana, codes = roma2hira(args.roma, return_codes=True)
@@ -288,7 +379,7 @@ def run_cmd_uni(args):
         print(f'{k} {hex(ord(k))}')
 
 
-def run_review_loop(user, model, limit, test_user, instructions):
+def run_review_loop(user, model, limit, test_func, instructions, filter=None):
 
     # Get due questions
     due = []
@@ -310,7 +401,7 @@ def run_review_loop(user, model, limit, test_user, instructions):
 
     # Ask the questions and track failures. Update the quiz results.
     for i, qr in enumerate(due):
-        if test_user(qr, i, total):
+        if test_func(qr, i, total):
             qr.streak += 1
             cprint(f"ok {qr.streak}", "green", attrs=["bold"])
         else:
@@ -328,14 +419,14 @@ def run_review_loop(user, model, limit, test_user, instructions):
         cprint(f"Reviewing failures ({failed} cards)", "yellow")
         refails = []
         for i, qr in enumerate(fails):
-            if not test_user(qr, i, failed):
+            if not test_func(qr, i, failed):
                 refails.append(qr)
             print()
         fails = refails
     return total
 
 
-def test_user_writing(qr, i, total):
+def test_writing(qr, i, total):
     """Run on each kanji due for writing."""
     instr1 = '<Press any key to check>'
     instr2 = 'correct? <y/n>'
@@ -363,7 +454,7 @@ def test_user_writing(qr, i, total):
     return passed
 
 
-def test_user_meaning(qr, i, total):
+def test_meaning(qr, i, total):
     kanji = qr.kanji
     promptstr = f'({i+1}/{total}) {colored(kanji.unicode, "cyan", attrs=["bold"])}? '
     r = input(promptstr)
@@ -380,7 +471,7 @@ def test_user_meaning(qr, i, total):
     return ok
 
 
-def test_user_reading(qr, i, total):
+def test_reading(qr, i, total):
     reading = qr.reading
     kanji = reading.kanji
     phrase = reading.phrase
@@ -408,6 +499,41 @@ def test_user_reading(qr, i, total):
     return ok
 
 
+def test_vocab(qr, i, total):
+    phrase = qr.phrase
+
+    promptstr = f'({i+1}/{total}) {colored(phrase.unicode, "cyan", attrs=["bold"])}? '
+
+    r = input(promptstr)
+    backup = f'\033[1A'
+    sys.stdout.write(backup)
+    print(f'{promptstr}\b\b ', end='')
+
+    if r:
+        try:
+            h = roma2hira(r)
+        except (KeyError, NotKanaError):
+            h = '<invalid>'
+    else:
+        h = '?'
+    ok = h == phrase.hiragana
+    if ok:
+        cprint(f'{h} ', "green", end='')
+    else:
+        cprint(f'{colored(h, "red")} should be {colored(phrase.hiragana, "white", attrs=["bold"])} ', end='')
+        cprint(f"fail", attrs=["bold"])
+    return ok
+
+
+# def filter_vocab(in_qrs):
+#     out_qrs = []
+#     for qr in in_qrs:
+#         phrase = qr.phrase
+#         if (all(lambda c: models.Kanji.get(unicode=c) is not None for c in phrase.unicode)):
+#             out_qrs.append(qr)
+#     return out_qrs
+
+
 def run_cmd_review(args):
     db = models.init(args.database_filename)
     with orm.db_session:
@@ -417,18 +543,23 @@ def run_cmd_review(args):
 
         if args.drillname == 'write':
             run_review_loop(
-                user, models.WritingQuizResult, args.limit, test_user_writing,
+                user, models.WritingQuizResult, args.limit, test_writing,
                 'Given the meaning, write the kanji'
             )
         elif args.drillname == 'mean':
             run_review_loop(
-                user, models.MeaningQuizResult, args.limit, test_user_meaning,
+                user, models.MeaningQuizResult, args.limit, test_meaning,
                 'Given the kanji, type the meaning'
             )
         elif args.drillname == 'read':
             run_review_loop(
-                user, models.ReadingQuizResult, args.limit, test_user_reading,
+                user, models.ReadingQuizResult, args.limit, test_reading,
                 'Given the kanji and the phrase, type the "on" in romaji'
+            )
+        elif args.drillname == 'vocab':
+            run_review_loop(
+                user, models.VocabQuizResult, args.limit, test_vocab,
+                'Given the phrase, first type the reading in romaji'
             )
 
 if __name__ == "__main__":
@@ -489,7 +620,7 @@ if __name__ == "__main__":
 
     review_parser = subp.add_parser('review', help="Review cards that are due")
     review_parser.add_argument(
-        '-d', '--drillname', choices=('write', 'read', 'mean'), default='write'
+        '-d', '--drillname', choices=('write', 'read', 'mean', 'vocab'), default='write'
     )
     review_parser.add_argument(
         '-l', '--limit', type=int, default=None,

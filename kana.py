@@ -1,4 +1,3 @@
-
 ROMA2KATA = {
     '_a': '30A1','a': '30A2','_i': '30A3','i': '30A4','_u': '30A5','u': '30A6','_e': '30A7','e': '30A8',
     '_o': '30A9','o': '30AA','ka': '30AB','ga': '30AC','ki': '30AD','gi': '30AE','ku': '30AF','gu': '30B0',
@@ -10,7 +9,7 @@ ROMA2KATA = {
     'be': '30D9','pe': '30DA','ho': '30DB','bo': '30DC','po': '30DD','ma': '30DE','mi': '30DF','mu': '30E0',
     'me': '30E1','mo': '30E2',
     '_ya': '30E3','ya': '30E4','_yu': '30E5','yu': '30E6','_yo': '30E7','yo': '30E8',
-    'ra': '30E9','ri': '30EA','ru': '30EB','re': '30EC','ro': '30ED','_wa': '30EE','wa': '30EF', 
+    'ra': '30E9','ri': '30EA','ru': '30EB','re': '30EC','ro': '30ED','_wa': '30EE','wa': '30EF',
     'wo': '30F2', 'n': '30F3',
     'kyu': ('ki', '_yu'),
     'kyo': ('ki', '_yo'),
@@ -26,8 +25,8 @@ ROMA2KATA = {
     'ryo': ('ri', '_yo'),
     'ryu': ('ri', '_yu'),
     'byo': ('bi', '_yo'),
-    'bya': ('bi', '_ya'),    
-    'mya': ('mi', '_ya'),    
+    'bya': ('bi', '_ya'),
+    'mya': ('mi', '_ya'),
     'kki': ('_tsu', 'ki'),
     'hyo': ('hi', '_yo'),
     'kya': ('ki', '_ya'),
@@ -53,7 +52,7 @@ ROMA2HIRA = {
     'be': '3079', 'pe': '307A', 'ho': '307B', 'bo': '307C', 'po': '307D', 'ma': '307E', 'mi': '307F', 'mu': '3080',
     'me': '3081', 'mo': '3082',
     '_ya': '3083', 'ya': '3084', '_yu': '3085', 'yu': '3086', '_yo': '3087', 'yo': '3088',
-    'ra': '3089', 'ri': '308A', 'ru': '308B', 're': '308C', 'ro': '308D', 'wa': '308F', 
+    'ra': '3089', 'ri': '308A', 'ru': '308B', 're': '308C', 'ro': '308D', 'wa': '308F',
     'wo': '3092', 'n': '3093',
     'kyu': ('ki', '_yu'),
     'kyo': ('ki', '_yo'),
@@ -64,8 +63,8 @@ ROMA2HIRA = {
     'jo': ('ji', '_yo'),
     'byo': ('bi', '_yo'),
     'nyu': ('ni', '_yu'),
-    'bya': ('bi', '_ya'),    
-    'mya': ('mi', '_ya'),    
+    'bya': ('bi', '_ya'),
+    'mya': ('mi', '_ya'),
     'cha': ('chi', '_ya'),
     'chu': ('chi', '_yu'), 'kyu': ('ki', '_yu'),
     'cho': ('chi', '_yo'),
@@ -105,6 +104,19 @@ class NotKanaError(Exception):
     pass
 
 
+def is_hiragana(char):
+    return 0x3040 <= ord(char) <= 0x309F
+
+
+def is_katakana(char):
+    return 0x30A0 <= ord(char) <= 0x30FF
+
+
+def is_kanji(char):
+    # Main CJK + Extension A
+    return 0x4E00 <= ord(char) <= 0x9FFF or (0x3400 <= ord(char) <= 0x4DBF)
+
+
 def roma2kata(s):
     return convert_roma(s, ROMA2KATA)
 
@@ -112,6 +124,8 @@ def roma2kata(s):
 def roma2hira(phr, **kwargs):
     return convert_roma(phr, ROMA2HIRA, **kwargs)
 
+def kata2hira(c):
+    return chr(ord(c) - 0x60)
 
 def decode(uni):
     if uni:
