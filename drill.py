@@ -97,8 +97,8 @@ def is_knowable_phrase(phrase):
     # Try to build the phrase's hiragana from the consituent kanji
     # characters using known readings. Iff we can, the phrase is
     # knowable.
-    target = phrase.hiragana
-    reading_hira = ''
+    target = phrase.hiragana  # phrase to build
+    reading_hira = ''         # last match, if any
 
     # For each kanji or kana in the phrase, match it to the target
     # prefix then chop it off the front to advance the target for the
@@ -106,12 +106,13 @@ def is_knowable_phrase(phrase):
     for c in phrase.unicode:
 
         # For the odd case where the phrase includes katakana, convert
-        # to hiragana to check the match below.
+        # to hiragana and fall through to the next check (note that
+        # the target is always hiragana).
         if is_katakana(c):
             c = kata2hira(c)
             import pdb; pdb.set_trace()
 
-        # If it's hiragana that's fine. But it should match the target.
+        # If it's hiragana it should match the target.
         if is_hiragana(c):
             if c != target[0]:
                 raise BadEntryError(f'Expected {c} as next letter in {target} for {phrase.unicode} ({phrase.hiragana})')
@@ -119,7 +120,8 @@ def is_knowable_phrase(phrase):
             continue
 
         # Check for the special iteration character which has no fixed
-        # reading. Retry the last match and advance.
+        # reading. It's a shorthand for "repeat the last kanji". Retry
+        # the last match.
         if c == '々':
             if not target.startswith(reading_hira):
                 raise BadEntryError(
@@ -130,7 +132,9 @@ def is_knowable_phrase(phrase):
                 target = target[len(reading_hira):]
                 continue
 
-        # Else it must be kanji, or bad data.
+        # It must be kanji at this point, or bad data. Note that rare
+        # kanji might not pass this test (the test can be modified to
+        # check other unicode ranges if necessary).
         if not is_kanji(c):
             raise NotKanjiError(f'{c} does not appear to be kanji but appears in {phrase.unicode} ({phrase.hiragana})')
 
@@ -154,7 +158,6 @@ def is_knowable_phrase(phrase):
 
 
         if not found:
-            #print(f"No reading for {kanji.unicode} that matches first part of {target}")
             return False
 
     return True
@@ -519,19 +522,23 @@ def test_vocab(qr, i, total):
     ok = h == phrase.hiragana
     if ok:
         cprint(f'{h} ', "green", end='')
+
+        instr = "meaning? "
+        r = input(instr)
+
+        backup = f'\033[1A\033[K'  # move cursor up and clear to end of line
+        sys.stdout.write(backup)
+        cprint(f'{promptstr}{colored(h, "green")} ', end='')
+
+        answer = phrase.meaning.split(";")[0]
+        if answer == r:
+            cprint(f'{colored(r, "green")} ', end='')
+            return True
+        cprint(f'{colored(r, "red")} should be {colored(answer, "white", attrs=["bold"])} ', end='')
     else:
         cprint(f'{colored(h, "red")} should be {colored(phrase.hiragana, "white", attrs=["bold"])} ', end='')
-        cprint(f"fail", attrs=["bold"])
-    return ok
-
-
-# def filter_vocab(in_qrs):
-#     out_qrs = []
-#     for qr in in_qrs:
-#         phrase = qr.phrase
-#         if (all(lambda c: models.Kanji.get(unicode=c) is not None for c in phrase.unicode)):
-#             out_qrs.append(qr)
-#     return out_qrs
+    cprint(f"fail", "red", attrs=["bold"])
+    return False
 
 
 def run_cmd_review(args):
