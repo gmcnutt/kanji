@@ -424,7 +424,8 @@ def run_review_loop(user, model, limit, test_func, instructions, filter=None):
         for i, qr in enumerate(fails):
             if not test_func(qr, i, failed):
                 refails.append(qr)
-            print()
+            else:
+                print()
         fails = refails
     return total
 
@@ -530,13 +531,17 @@ def test_vocab(qr, i, total):
         sys.stdout.write(backup)
         cprint(f'{promptstr}{colored(h, "green")} ', end='')
 
-        answer = phrase.meaning.split(";")[0]
+        answer = phrase.meaning.split(";")[0]  # take the first if there are multiple
+        answer = answer.split(' (')[0]  # ignore parenthetical note
         if answer == r:
             cprint(f'{colored(r, "green")} ', end='')
             return True
         cprint(f'{colored(r, "red")} should be {colored(answer, "white", attrs=["bold"])} ', end='')
     else:
-        cprint(f'{colored(h, "red")} should be {colored(phrase.hiragana, "white", attrs=["bold"])} ', end='')
+        cprint(
+            f'{colored(h, "red")} should be {colored(phrase.hiragana, "white", attrs=["bold"])} ({phrase.meaning}) ',
+            end=''
+        )
     cprint(f"fail", "red", attrs=["bold"])
     return False
 

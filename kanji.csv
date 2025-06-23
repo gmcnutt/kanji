@@ -129,17 +129,17 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 128,128,5b98,bureaucrat,8,kan,1271,"6559,5b98",kyoukan,"teacher;professor"
 129,129,7ba1,pipe,14,kan,1273,"7ba1,7406",kanri,"administration;management"
 130,130,68fa,coffin,16,kan,1272,"68fa,8eca",kanshiya,hearse
-131,131,9928,Bldg,16,kan,1478,"9928,9577",kanchou,"superintendent of a building"
+131,131,9928,Bldg,16,kan,1478,"9928,9577",kanchou,"building superintendent"
 132,132,5039,frugal,10,ken,1674,"5039,7d04",ken:yaku,economizing
 133,133,9a13,try,18,ken,0,"8a66,9a13",shiken,"test;examination"
 134,134,967a,precipitous,11,ken,1672,"5192,967a",bouken,adventure
 135,135,691c,examination,12,ken,1673,"691c,67fb",kensa,inspection
-136,136,5263,saber,10,ken,1671,"5263,9053",kendou,"Japanese 'way of the sword'"
+136,136,5263,saber,10,ken,1671,"5263,9053",kendou,Japanese fencing
 137,137,9ebb,hemp,11,ma,593,"9ebb,85ac",mayaku,narcotics
 138,138,6469,chafe,15,ma,639,"6469,5929,697c",matenrou,skyscraper
 139,139,78e8,grind,16,ma,594,"7814,78e8",kenma,"grinding;polishing"
 140,140,9b54,witch,21,ma,2022,"9b54,5973",majo,witch
-141,141,58eb,gentleman,3,shi,319,"58eb,5b98",shikan,"commisioned officer"
+141,141,58eb,gentleman,3,shi,319,"58eb,5b98",shikan,"commissioned officer"
 142,142,4ed5,attend,5,shi,960,"51fa,4ed5",shusshi,"attendance (at work)"
 143,143,5fd7,intention,7,shi,600,"5bf8,5fd7",sunshi,"small token (of gratitude)"
 144,144,8a8c,document,14,shi,601,"96d1,8a8c",zasshi,magazine
@@ -266,7 +266,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 265,265,671d,morning,12,chou,53,"671d,98df",choushoku,breakfast
 266,266,5632,derision,15,chou,54,"5632,7f75",chouba,taunt
 267,267,6f6e,tide,15,chou,152,"6e80,6f6e",manchou,"high tide"
-268,268,5dde,state,6,shuu,135,"672c,5dde",honshuu,"(Japan's) main island"
+268,268,5dde,state,6,shuu,135,"672c,5dde",honshuu,"Japan's main island"
 269,269,6d32,continent,9,shuu,2386,"516d,5927,6d32",rokudaishuu,"the six continents"
 270,270,916c,repay,13,shuu,1540,"5fdc,916c",oushuu,"retort;repartee"
 271,271,6cc9,spring,9,sen,140,"6cc9,6c34",sensui,"natural spring"
@@ -294,7 +294,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 293,293,81b3,"dining tray",16,zen,1113,"304a,81b3",ozen,"table tray;serving of food"
 294,294,7e55,darning,18,zen,1433,"4fee,7e55",shuuzen,"repair;mending"
 295,295,9060,distant,13,en,429,"6c38,9060",eien,eternity
-296,296,5712,park,13,en,629,"5ead,5712",teien,"(Japanese) garden"
+296,296,5712,park,13,en,629,"5ead,5712",teien,"Japanese garden"
 297,297,733f,monkey,13,en,430,"91ce,733f",yaen,"wild monkey"
 298,298,5e1d,sovereign,9,tei,466,"5e1d,56fd",teikoku,empire
 299,299,8ae6,renunciation,16,tei,467,"8ae6,89b3",teikan,"resignation (to)"
@@ -373,7 +373,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 372,372,61f2,penal,18,chou,953,"61f2,7f70",choubatsu,punishment;disciplinary action
 373,373,52d5,move,11,dou,1806,"81ea,52d5,8eca",jidousha,automobile
 374,374,50cd,work,13,dou,1809,"52b4,50cd",roudou,labor
-375,375,9053,road-way,12,dou,295,"83ef,9053",kadou,Japanese "way of flowers"
+375,375,9053,road-way,12,dou,295,"83ef,9053",kadou,Japanese flower arranging
 376,376,5c0e,guidance,15,dou,296,"6307,5c0e",shidou,guidance
 377,377,6211,ego,7,ga,690,"81ea,6211",jiga,ego
 378,378,9913,starve,15,ga,1586,"98e2,9913",kiga,starvation;famishing
@@ -395,7 +395,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 394,394,6170,consolation,15,i,1177,"6170,5b89",ian,solace;comfort
 395,395,4e57,ride,9,jou,1709,"4e57,8eca",jousha,riding in a car
 396,396,5270,surplus,11,jou,1710,"904e,5270",kajou,excess
-397,397,53d7,accept,8,ju,794,"53d7,9a13",juken,sitting for an exam
+397,397,53d7,accept,8,ju,794,"53d7,9a13",juken,sit for an exam
 398,398,6388,impart,11,ju,795,"6559,6388",kyuuju,professor
 399,399,9700,demand,14,ju,1249,"9700,8981",juyou,demand (economic)
 400,400,5112,Confucian,16,ju,1250,"5112,5b66",jukaku,Confucianism
@@ -428,7 +428,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 427,427,8133,brain,11,nou,2084,"9996,8133",shunou,head of state or government
 428,428,60a9,trouble,10,nou,2085,"82e6,60a9",kunou,suffering;distress
 429,429,968f,follow,12,zui,1395,"968f,5206",zuibun,fairly;pretty much
-430,430,9ac4,marrow,19,zui,1385,"8133,9ac4",nouzui,the brains
+430,430,9ac4,marrow,19,zui,1385,"8133,9ac4",nouzui,brains
 431,431,9ec4,yellow,11,ou,1887,"9ec4,91d1",ougon,gold
 432,432,6a2a,sideways,15,ou,1888,"6a2a,65ad",oudan,crossing;cutting across
 433,433,6e13,mountain stream,11,kei,903,"6e13,8c37",keikoku,dale;valley
