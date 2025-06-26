@@ -67,7 +67,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 66,66,5f35,lengthen,11,chou,1921,"4e3b,5f35",shuchou,"emphasis;insistence"
 67,67,5e33,notebook,11,chou,1922,"901a,5e33",tsuuchou,"bankbook"
 68,68,8139,dilate,12,chou,1923,"81a8,8139",bouchou,"swelling;inflation"
-69,69,4ed8,adhere,5,fu,1000,"4ed8,4e0e",fuyo,"an allowance;grant"
+69,69,4ed8,adhere,5,fu,1000,"4ed8,4e0e",fuyo,"allowance;grant"
 70,70,5e9c,municipality,8,fu,1002,"653f,5e9c",seifu,government
 71,71,7b26,token,11,fu,1001,"7b26,53f7",fugou,"cipher;mark;symbol"
 72,72,9644,affixed,8,fu,1303,"9644,8fd1",fukin,vicinity
@@ -99,7 +99,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 98,98,62b1,embrace,8,hou,645,"4ecb,62b1",kaihou,"nursing;care"
 99,99,80de,placenta,9,hou,531,"540c,80de",douhou,"compatriots;countrymen"
 100,100,98fd,sated,13,hou,1480,"98fd,98df",houshoku,"saturation;gluttony"
-101,101,5b22,lass,16,jou,1530,"5b22",jou,"daughter;girl"
+101,101,5b22,lass,16,jou,1530,"5b22",jou,"lass;daughter"
 102,102,8b72,defer,20,jou,1528,"8b72,6b69",jouho,"concession;compromise"
 103,103,58cc,lot,16,jou,1529,"571f,58cc",dojou,"the soil"
 104,104,91b8,brew,20,jou,1527,"91b8,9020",jouzou,"brewing;distillation"
@@ -214,7 +214,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 213,213,52aa,toil,7,do,929,"52aa,529b",doryoku,"effort;exertion"
 214,214,6c38,eternity,5,ei,139,"6c38,9060",eien,eternity
 215,215,6cf3,swim,8,ei,144,"6c34,6cf3",suiei,swimming
-216,216,8a60,recitation,12,ei,369,"8a60,6b4c",eika,"composing a song or poem"
+216,216,8a60,recitation,12,ei,369,"8a60,6b4c",eika,chant
 217,217,5674,erupt,15,fun,1281,"5674,6c34",funsui,fountain
 218,218,61a4,aroused,15,fun,1283,"7fa9,61a4",gifun,"righteous indignation"
 219,219,58b3,tomb,15,fun,1282,"53e4,58b3",kofun,"tumulus;old burial grounds"
@@ -224,7 +224,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 223,223,7de8,compilation,15,hen,1966,"7de8,96c6",henshuu,editing
 224,224,504f,partial,11,hen,1964,"504f,898b",henken,bias
 225,225,904d,everywhere,12,hen,1965,"666e,904d",fuhen,universal
-226,226,6148,mercy,13,ji,1490,"6148,611b",jiai,"kindness and love"
+226,226,6148,mercy,13,ji,1490,"6148,611b",jiai,"charity"
 227,227,78c1,magnet,14,ji,1491,"78c1,6c17",jiki,magnetism
 228,228,6ecb,nourishing,12,ji,1489,"6ecb,990a",jiyou,nourishment
 229,229,5ef7,courts,7,tei,547,"51fa,5ef7",shuttei,"appearance in court"
@@ -304,11 +304,11 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 303,303,6349,nab,10,soku,1374,"6355,6349",hosoku,"capture;apprehension"
 304,304,82d7,seedling,8,byou,249,"7a2e,82d7",shubyou,"seeds and seedlings"
 305,305,63cf,sketch,11,byou,723,"70b9,63cf",tenbyou,"a sketch;profile"
-306,306,732b,cat,11,byou,259,"611b,732b",aibyou,"pet cat"
+306,306,732b,cat,11,byou,259,"611b,732b",aibyou,"cat"
 307,307,5bb6,house,10,ka,580,"5bb6,5ead",katei,home
 308,308,5ac1,"marry into",13,ka,581,"8ec2,5ac1",tenka,"remarrying (archaic)"
 309,309,7a3c,earnings,15,ka,959,"7a3c,52d5",kadou,"operation (of a factory);work"
-310,310,672b,extremity,9,matsu,230,"7c97,672b",somatsu,"plain;coarse"
+310,310,672b,extremity,9,matsu,230,"7c97,672b",somatsu,"crude;shabby"
 311,311,6cab,splash,8,matsu,232,"6ce1,6cab",houmatsu,"bubbles;foam"
 312,312,62b9,rub,8,matsu,694,"62b9,6bba",massatsu,obliteration
 313,313,5ce1,gorge,9,kyou,1355,"6d77,5ce1",kaikyou,"straits;sound;channel"
@@ -323,7 +323,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 322,322,5c48,yield,8,kutsu,1140,"9000,5c48",taikutsu,boredom
 323,323,6398,dig,11,kutsu,1141,"63a1,6398",saikutsu,mining
 324,324,7a9f,cavern,13,kutsu,1420,"6d1e,7a9f",doukutsu,cavern
-325,325,5efa,build,9,ken,417,"5efa,8b70",kengi,"submission of a proposal"
+325,325,5efa,build,9,ken,417,"5efa,8b70",kengi,proposal submission
 326,326,9375,key,17,ken,418,"9375,76e4",kenban,keyboard
 327,327,5065,healthy,11,ken,1048,"4fdd,5065",maken,"health protection;hygiene"
 328,328,51e1,mediocre,3,han,66,"51e1,4f8b",hanrei,"introductory remarks"
@@ -401,7 +401,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 400,400,5112,Confucian,16,ju,1250,"5112,5b66",jukaku,Confucianism
 401,401,5f93,accompany,10,juu,942,"5f93,4e8b",juuji,engagement;pursuit
 402,402,7e26,vertical,16,juu,1436,"64cd,7e26",soujuu,piloting;manuevering
-403,403,587e,cram school,14,juku,331,"587e,9577",jukuchou,principal of a private school
+403,403,587e,cram school,14,juku,331,"587e,9577",jukuchou,private school principal
 404,404,719f,mellow,15,juku,332,"6210,719f",seijuku,ripeness;maturity
 405,405,65ec,decameron,6,jun,71,"4e2d,65ec",chuujun,middle ten days of the month
 406,406,6b89,martyrdom,10,jun,872,"6b89,6b7b",junshi,martyr's death
@@ -447,7 +447,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 446,446,66d6,unclear,17,ai,797,"66d6,6627",aimai,vague;unclear
 447,447,61c7,sociable,17,kon,2123,"61c7,89aa,4f1a",konshinkai,social reunion;reception
 448,448,58be,groundbreaking,16,kon,2124,"958b,58be",kaikon,reopening a wasteland
-449,449,9aa8,skeleton,10,kotsu,1383,"9aa8,9ac4",kotsuzui,bone marrow
+449,449,9aa8,skeleton,10,kotsu,1383,"9aa8,9ac4",kotsuzui,marrow
 450,450,6ed1,slippery,13,kotsu,1384,"6ed1,7a3d",kokkei,ridiculous
 451,451,90ce,son,9,rou,1995,"65b0,90ce",shinrou,bridegroom
 452,452,5eca,corridor,12,rou,1996,"753b,5eca",garou,painting gallery
@@ -469,7 +469,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 468,468,7720,sleep,10,min,1977,"5b89,7720",anmin,peaceful sleep
 469,469,7136,sort of thing,12,nen,256,"5929,7136",tennen,natural
 470,470,71c3,burn,16,nen,549,"53ef,71c3,6027",kanensei,combustibility
-471,471,66a6,calendar,14,reki,226,"9084,66a6",kanreki,60th birthday
+471,471,66a6,calendar,14,reki,226,"9084,66a6",kanreki,sixtieth birthday
 472,472,6b74,curriculum,14,reki,402,"6b74,53f2",rekishi,history
 473,473,8fb2,agriculture,13,nou,2170,"8fb2,5b66,6821",nougakkou,agricultural school
 474,474,6fc3,concentrated,16,nou,2171,"6fc3,539a",noukou,thickness;density
@@ -607,7 +607,7 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 606,606,71b1,heat,15,netsu,1634,"71b1,5e2f",nettai,the tropics
 607,607,516b,eight,2,hachi,8,"5c3a,516b",shakuhachi,shakuhachi flute
 608,608,7f70,penalty,14,bachi,896,"7f70,5f53,305f,308a",bachiotari,cursed;damned
-609,609,767e,hundred,6,hyaku,38,"4e8c,767e",nihyaku,200
+609,609,767e,hundred,6,hyaku,38,"4e8c,767e",nihyaku,two hundred
 610,610,767d,white,6,byaku,37,"9ed2,767d",kokubyaku,black and white;good and bad
 611,611,7c73,rice,6,bei,987,"7c73,56fd",beikoku,America
 612,612,5317,north,5,hoku,480,"5317,6d77,9053",hokkaidou,Hokkaido
@@ -718,3 +718,20 @@ pk,RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana
 717,716,868a,mosquito,10,,1864,,,
 718,717,4e3c,donburi,5,,1947,,,
 719,718,6d66,bay,10,,1980,,,
+720,719,84b2,bullrush,13,,1981,,,
+721,720,6795,pillow,8,,2034,,,
+722,721,9db4,crane,21,,2093,,,
+723,722,8526,vine,14,,2095,,,
+724,723,9ce9,pigeon,13,,2096,,,
+725,724,5ca1,Mount,8,,2112,,,
+726,725,99d2,pony,15,,2133,,,
+727,726,865e,uneasiness,13,,2150,,,
+728,727,9e7f,deer,11,,2154,,,
+729,728,718a,bear,14,,2159,,,
+730,729,5bc5,sign of the tiger,11,,2162,,,
+731,730,54b2,blossom,9,,2174,,,
+732,731,4e14,moreover,5,,2190,,,
+733,732,6f5f,lagoon,15,,2195,,,
+734,733,4e11,sign of the cow,4,,2197,,,
+735,734,536f,sign of the hare,5,,2199,,,
+736,735,5df3,sign of the snake,3,,2200,,,
