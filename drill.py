@@ -183,22 +183,27 @@ def add_missing_quiz_results(user):
 
 
 def run_cmd_dump(args):
-    db = models.init(args.database_filename)
-    dump_unicode_range("---hiragana---", 0x3041, 0x3096)
-    dump_unicode_range("---katakana---", 0x30a1, 0x30fa)
-    with orm.db_session:
-        print("---kanji---")
-        kanjis = models.Kanji.select()
-        for kanji in kanjis:
-            print(f'{kanji.unicode} {kanji.mnemonic_meaning:16} R1-{kanji.heisig_v1_frame}')
-        print("---phrases---")
-        phrases = models.Phrase.select()
-        for phrase in phrases:
-            print(f'{phrase.unicode:6} {phrase.hiragana:16} {phrase.meaning}')
-        print("---readings---")
-        readings = models.Reading.select()
-        for reading in readings:
-            print(f'{reading.kanji.unicode} in {reading.phrase.unicode} is {reading.kana} ({reading.romaji})')
+    if args.specific=='kana':
+        dump_unicode_range("---hiragana---", 0x3041, 0x3096)
+        dump_unicode_range("---katakana---", 0x30a1, 0x30fa)
+    else:
+        db = models.init(args.database_filename)
+        with orm.db_session:
+            if args.specific=='kanji':
+                print("---kanji---")
+                kanjis = models.Kanji.select()
+                for kanji in kanjis:
+                    print(f'{colored(kanji.unicode, "cyan", attrs=["bold"])} {kanji.mnemonic_meaning:16} R1-{kanji.heisig_v1_frame} {colored(kanji.stroke_count, "yellow")}')
+            elif args.specific=='phrases':
+                print("---phrases---")
+                phrases = models.Phrase.select()
+                for phrase in phrases:
+                    print(f'{phrase.unicode:6} {phrase.hiragana:16} {phrase.meaning}')
+            elif args.specific=='readings':
+                print("---readings---")
+                readings = models.Reading.select()
+                for reading in readings:
+                    print(f'{reading.kanji.unicode} in {reading.phrase.unicode} is {reading.kana} ({reading.romaji})')
 
 
 def run_cmd_load(args):
@@ -488,7 +493,7 @@ def test_reading(qr, i, total):
         try:
             on = roma2kata(r)
         except (KeyError, NotKanaError):
-            on = '<invalid>'
+            on = f'{r}<invalid>'
     else:
         on = '?'
     ok = on == reading.kana
@@ -517,7 +522,7 @@ def test_vocab(qr, i, total):
         try:
             h = roma2hira(r)
         except (KeyError, NotKanaError):
-            h = '<invalid>'
+            h = f'{r}<invalid>'
     else:
         h = '?'
     ok = h == phrase.hiragana
@@ -531,12 +536,13 @@ def test_vocab(qr, i, total):
         sys.stdout.write(backup)
         cprint(f'{promptstr}{colored(h, "green")} ', end='')
 
-        answer = phrase.meaning.split(";")[0]  # take the first if there are multiple
-        answer = answer.split(' (')[0]  # ignore parenthetical note
-        if answer == r:
-            cprint(f'{colored(r, "green")} ', end='')
-            return True
-        cprint(f'{colored(r, "red")} should be {colored(answer, "white", attrs=["bold"])} ', end='')
+        answers = phrase.meaning.split(";")
+        for answer in answers:
+            answer = answer.split(' (')[0]  # ignore parenthetical note
+            if answer == r:
+                cprint(f'{colored(r, "green")} ', end='')
+                return True
+        cprint(f'{colored(r, "red")} should be {colored(phrase.meaning, "white", attrs=["bold", "underline"])} ', end='')
     else:
         cprint(
             f'{colored(h, "red")} should be {colored(phrase.hiragana, "white", attrs=["bold"])} ({phrase.meaning}) ',
@@ -587,6 +593,10 @@ if __name__ == "__main__":
     subp = pars.add_subparsers(help="Commands", required=True)
 
     dump_parser = subp.add_parser("dump", help="Dump kana and known kanji")
+    dump_parser.add_argument(
+        '-s', '--specific', choices=('kana', 'kanji', 'phrases', 'readings'),
+        default='kanji'
+    )
     dump_parser.set_defaults(func=run_cmd_dump)
 
     load_parser = subp.add_parser(
