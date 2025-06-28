@@ -223,6 +223,11 @@ def run_cmd_load(args):
 
                 # Create/update the kanji
                 kanji = models.Kanji.get(unicode=unicode)
+                if kanji is None:
+                    # If the kanji was inserted with the wrong unicode
+                    # but the right meaning, the above lookup failed,
+                    # but we need to update it.
+                    kanji = models.Kanji.get(mnemonic_meaning=mnemonic_meaning)
                 kanji = create_or_update(
                     models.Kanji,
                     kanji,
@@ -534,7 +539,7 @@ def test_vocab(qr, i, total):
 
         backup = f'\033[1A\033[K'  # move cursor up and clear to end of line
         sys.stdout.write(backup)
-        cprint(f'{promptstr}{colored(h, "green")} ', end='')
+        cprint(f'{promptstr}{h} ', end='')
 
         answers = phrase.meaning.split(";")
         for answer in answers:
