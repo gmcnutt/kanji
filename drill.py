@@ -213,7 +213,7 @@ def run_cmd_load(args):
             r = csv.reader(f)
             header = next(r)
             for line in r:
-                (pk, rk2, unicode, mnemonic_meaning, stroke_count, on_romaji,
+                (rk2, unicode, mnemonic_meaning, stroke_count, on_romaji,
                  heisig_v1_frame, phr,phr_kana,phr_eng) = line
                 unicode = decode(unicode)
                 on_kata = roma2kata(on_romaji) or None
