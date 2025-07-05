@@ -19,8 +19,7 @@ from kana import (decode, decode_phrase, roma2kata, roma2hira, kata2hira,
 
 AGE_FACTOR = 1.6
 TODAY = datetime.today()
-FMT = '%Y-%m-%d'
-TODAYSTR = TODAY.strftime(FMT)
+FMT = '%Y-%m-%d %H:%M:%S'
 
 
 class UserNotFoundError(Exception):
@@ -330,7 +329,7 @@ def run_cmd_users_import(args):
                 )
 
 
-def run_cmd_stats(args):
+def run_cmd_due(args):
     db = models.init(args.database_filename)
 
     writing_sched = defaultdict(int)
@@ -382,6 +381,25 @@ def run_cmd_stats(args):
     print('')
 
 
+def run_cmd_stats(args):
+    db = models.init(args.database_filename)
+
+    with orm.db_session:
+        
+        user = models.User.get(name=args.username)
+        if not user:
+            raise UserNotFoundError(f"User with name '{args.username}' not found")
+
+        results = list(models.WritingQuizResult.select(user=user).order_by(
+                lambda w: (w.streak, w.last_date)
+        ))
+        for r in results:
+            r.days_until_due = get_days_until_due(r)
+        sorted_results = sorted(results, key=lambda r: r.days_until_due)
+        for result in sorted_results:
+            print(f'{colored(result.kanji.unicode, "cyan", attrs=["bold"])} {result.days_until_due} {colored(result.streak, "green")} {result.last_date}')
+            
+
 def run_cmd_roma2hira(args):
     kana, codes = roma2hira(args.roma, return_codes=True)
     print(f'{kana} {",".join(codes)}')
@@ -420,7 +438,7 @@ def run_review_loop(user, model, limit, test_func, instructions, filter=None):
         else:
             qr.streak = 0
             fails.append(qr)
-        qr.last_date = TODAYSTR
+        qr.last_date = datetime.now()
 
     num_correct = total - len(fails)
     percent = round(num_correct * 100 / total)
@@ -604,6 +622,13 @@ if __name__ == "__main__":
     )
     dump_parser.set_defaults(func=run_cmd_dump)
 
+    stats_parser = subp.add_parser("stats", help="Stats kana and known kanji")
+    stats_parser.add_argument(
+        '-d', '--drillname', choices=('write', 'read', 'mean', 'vocab'),
+        default='write'
+    )
+    stats_parser.set_defaults(func=run_cmd_stats)
+
     load_parser = subp.add_parser(
         'load', help='Load updated kanji and phrase data from CSV'
     )
@@ -631,8 +656,8 @@ if __name__ == "__main__":
     users_import_parser.add_argument('jsonfile', help="JSON file with quiz history")
     users_import_parser.set_defaults(func=run_cmd_users_import)
 
-    stats_parser = subp.add_parser('stats', help="Show drill stats")
-    stats_parser.set_defaults(func=run_cmd_stats)
+    stats_parser = subp.add_parser('due', help="Show drill stats")
+    stats_parser.set_defaults(func=run_cmd_due)
 
     roma_parser = subp.add_parser('roma2hira', help="Convert romaji to hiragana")
     roma_parser.add_argument('roma')
