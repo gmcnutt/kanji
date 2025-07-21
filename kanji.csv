@@ -823,7 +823,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 820,7968,ballot,11,hyou,1732,"6295,7968",touhyou,casting a vote
 821,6f02,drift,14,hyou,1733,"6f02,767d",hyouhaku,bleaching
 822,6a19,signpost,15,hyou,1734,"76ee,6a19",mokuhyou,target;aim
-823,6153,shudder,13,ritsu,1736,"6226,6153",senritsu,shivering;trembling
+823,6144,shudder,13,ritsu,1736,"6226,6144",senritsu,shivering;trembling
 824,798f,blessing,13,fuku,1171,"798f,7949",fukushi,welfare (social)
 825,526f,vice-,11,fuku,93,"526f,8a5e",fukushi,adverb
 826,5e45,hanging scroll,12,fuku,435,"5168,5e45",zenbuku,full extent;all
@@ -836,3 +836,12 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 833,6307,finger,9,shi,711,"6307,5c0e",shidou,guidance
 834,8102,fat,10,shi,494,"8102,80aa",shibou,fat
 835,8a63,visit a shrine,13,kei,495,"53c2,8a63",sankei,visit a shrine
+836,56fa,harden,8,ko,622,"9811,56fa",ganko,stubborn;persistent
+837,500b,individual,10,ko,1047,"500b,4eba",kojin,individual (an)
+838,932e,weld,16,ko,623,"932e,75be",koshitsu,chronic disease
+839,7b87,item,14,ka,2185,"4e00,7b87,6708",ikkagetsu,one month
+840,89b3,outlook,18,kan,614,"89b3,5bdf",kansatsu,observation
+841,52e7,persuade,13,kan,928,"52e7,5968",kanshou,encouragement;stimulation
+842,6b53,delight,15,kan,612,"4ea4,6b53",koukan,exchange of courtesies
+843,6a29,authority,15,ken,613,"6a29,5229",kenri,rights
+843,6a29,authority,15,gon,613,"6a29,73fe",gongen,avatar
