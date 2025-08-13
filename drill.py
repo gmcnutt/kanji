@@ -179,7 +179,11 @@ def add_missing_quiz_results(user):
             qr = models.VocabQuizResult.get(user=user, phrase=phrase)
             if not qr:
                 models.VocabQuizResult(user=user, phrase=phrase)
-
+            qr = models.PhraseQuizResult.get(user=user, hiragana=phrase.hiragana)
+            if not qr:
+                qr = models.PhraseQuizResult(user=user, hiragana=phrase.hiragana)
+            qr.phrases.add(phrase)
+            
 
 def run_cmd_dump(args):
     if args.specific=='kana':
@@ -336,6 +340,7 @@ def run_cmd_due(args):
     reading_sched = defaultdict(int)
     meaning_sched = defaultdict(int)
     vocab_sched = defaultdict(int)
+    phrase_sched = defaultdict(int)
 
     with orm.db_session:
         user = models.User.get(name=args.username)
@@ -350,13 +355,16 @@ def run_cmd_due(args):
             meaning_sched[get_days_until_due(result)] += 1
         for result in models.VocabQuizResult.select(user=user):
             vocab_sched[get_days_until_due(result)] += 1
+        for result in models.PhraseQuizResult.select(user=user):
+            phrase_sched[get_days_until_due(result)] += 1
 
     # Find the maximum day across all schedules
     max_day = max(
         max(writing_sched.keys(), default=-1),
         max(reading_sched.keys(), default=-1),
         max(meaning_sched.keys(), default=-1),
-        max(vocab_sched.keys(), default=-1)
+        max(vocab_sched.keys(), default=-1),
+        max(phrase_sched.keys(), default=-1)
     ) + 1  # Add 1 to include the max day in range
 
     # Print the schedules
@@ -380,6 +388,11 @@ def run_cmd_due(args):
         print(f'{vocab_sched[x]} ', end='')
     print('')
 
+    print('  Phrases Due: ', end='')
+    for x in range(max_day):
+        print(f'{phrase_sched[x]} ', end='')
+    print('')
+    
 
 def run_cmd_stats(args):
     db = models.init(args.database_filename)
@@ -575,6 +588,57 @@ def test_vocab(qr, i, total):
     return False
 
 
+def test_phrase(qr, i, total):
+
+    # Hack: test multiple phrases
+    #qr = models.PhraseQuizResult.get(hiragana='きかい')
+    
+    promptstr = f'({i+1}/{total}) {colored(qr.hiragana, "cyan", attrs=["bold"])}? '
+
+    phrases = set(qr.phrases)
+    n_phrases = len(phrases)
+    
+    for i in range(n_phrases):
+
+        r = input(promptstr)
+        backup = f'\033[1A'
+        sys.stdout.write(backup)
+        print(f'{promptstr}\b\b ', end='')
+
+        ok = False
+
+        for phrase in phrases:
+        
+            answers = phrase.meaning.split(";")
+            for answer in answers:
+                answer = answer.split(' (')[0]  # ignore parenthetical note
+                if answer == r:
+                    ok = True
+                    break
+            if ok:
+                cprint(f'{r} ', "green", end='')
+                cprint(
+                    f'{colored(phrase.meaning, "white", attrs=["bold"])} ({phrase.unicode}) ',
+                    end=''
+                )
+                more = len(phrases) > 1
+                if more:
+                    cprint('and', "magenta", attrs=["bold"])
+                phrases.remove(phrase)
+                break
+
+        if not ok:
+            # Use the last one found to show one possible meaning
+            cprint(
+                f'{colored(r, "red")} should be {colored(phrase.meaning, "white", attrs=["bold"])} ({phrase.unicode}) ',
+                end=''
+            )
+            cprint(f"fail", "red", attrs=["bold"])
+            return False
+
+    return True
+
+
 def run_cmd_review(args):
     db = models.init(args.database_filename)
     with orm.db_session:
@@ -601,6 +665,11 @@ def run_cmd_review(args):
             run_review_loop(
                 user, models.VocabQuizResult, args.limit, test_vocab,
                 'Given the phrase, first type the reading in romaji'
+            )
+        elif args.drillname == 'phrase':
+            run_review_loop(
+                user, models.PhraseQuizResult, args.limit, test_phrase,
+                'Given the hiragana type the meaning'
             )
 
 if __name__ == "__main__":
@@ -672,7 +741,7 @@ if __name__ == "__main__":
 
     review_parser = subp.add_parser('review', help="Review cards that are due")
     review_parser.add_argument(
-        '-d', '--drillname', choices=('write', 'read', 'mean', 'vocab'), default='write'
+        '-d', '--drillname', choices=('write', 'read', 'mean', 'vocab', 'phrase'), default='write'
     )
     review_parser.add_argument(
         '-l', '--limit', type=int, default=None,

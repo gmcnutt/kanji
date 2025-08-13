@@ -23,6 +23,7 @@ class Phrase(db.Entity):
     hiragana = Required(str)
     readings = Set('Reading')
     vocab_quiz_results = Set('VocabQuizResult')
+    phrase_quiz_result = Set('PhraseQuizResult')    
 
 
 class Reading(db.Entity):
@@ -59,21 +60,32 @@ class MeaningQuizResult(db.Entity):
     kanji = Required(Kanji)
 
 
+class VocabQuizResult(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    user = Required('User')
+    streak = Optional(int, default=0)
+    last_date = Optional(datetime, default=lambda: datetime.now())
+    phrase = Required(Phrase)
+
+ 
+class PhraseQuizResult(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    user = Required('User')
+    streak = Optional(int, default=0)
+    last_date = Optional(datetime, default=lambda: datetime.now())
+    hiragana = Required(str)
+    phrases = Set(Phrase)
+
+
 class User(db.Entity):
     id = PrimaryKey(int, auto=True)
     name = Optional(str, unique=True)
     meaning_quiz_result = Set(MeaningQuizResult)
     writing_quiz_result = Set(WritingQuizResult)
     reading_quiz_result = Set(ReadingQuizResult)
-    vocab_quiz_result = Set('VocabQuizResult')
+    vocab_quiz_result = Set(VocabQuizResult)
+    phrase_quiz_result = Set(PhraseQuizResult)
 
-
-class VocabQuizResult(db.Entity):
-    id = PrimaryKey(int, auto=True)
-    user = Required(User)
-    streak = Optional(int, default=0)
-    last_date = Optional(datetime, default=lambda: datetime.now())
-    phrase = Required(Phrase)
 
 
 def init(filename):
