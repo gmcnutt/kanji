@@ -136,8 +136,14 @@ def decode(uni):
         return None
 
 
-def decode_phrase(phr):
-    return "".join(decode(c) for c in phr.split(","))
+def decode_phrase(phr, anchor):
+    components = []
+    for c in phr.split(","):
+        if c == '$':
+            components.append(anchor)
+        else:
+            components.append(decode(c))
+    return "".join(components)
 
 
 def convert_roma(phr, code_table, return_codes=False):

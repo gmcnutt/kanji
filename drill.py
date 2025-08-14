@@ -220,7 +220,7 @@ def run_cmd_load(args):
                  heisig_v1_frame, phr,phr_kana,phr_eng) = line
                 unicode = decode(unicode)
                 on_kata = roma2kata(on_romaji) or None
-                phr = decode_phrase(phr) if phr else None
+                phr = decode_phrase(phr, unicode) if phr else None
                 phr_kana = roma2hira(phr_kana)
 
 
@@ -367,6 +367,9 @@ def run_cmd_due(args):
         max(phrase_sched.keys(), default=-1)
     ) + 1  # Add 1 to include the max day in range
 
+    # Truncate to the next two weeks
+    max_day = min(max_day, 14)
+    
     # Print the schedules
     print('Writing Due: ', end='')
     for x in range(max_day):
