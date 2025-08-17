@@ -436,11 +436,18 @@ def run_review_loop(user, model, limit, test_func, instructions, filter=None):
         cprint(f'{colored("Nothing due", "green")}')
         return 0
 
-    # Randomize and limit the list of questions
-    random.shuffle(due)
     available = len(due)
+
     if limit:
+        # Sort by last review date, most recently reviewed first,
+        # before limiting. This facilitates partial review on a huge
+        # backlog, allowing the user to build up memory on recently
+        # reviewed items before adding new items over future sessions.
+        due = sorted(due, key=lambda x: x.last_date, reverse=True)
         due = due[:limit]
+    
+    # Randomize the list.
+    random.shuffle(due)
     total = len(due)
     cprint(f'Reviewing ({total}/{available} cards)', "yellow")
     cprint(instructions, "yellow")
