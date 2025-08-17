@@ -14,7 +14,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 13,90e8,section,11,he,1845,"90e8,5c4b",heya,"room"
 14,7531,wherefore,5,yu,1105,"7531,6765",yurai,"reason;origin"
 15,6d41,current,11,ru,764,"6d41,8ee2",ruten,"reincarnation"
-16,4fdd,protect,9,ho,997,"4fdd,5b89",hoan,"security;keeping the peace"
+16,4fdd,protect,9,ho,1072,"4fdd,5b89",hoan,"security;keeping the peace"
 17,7559,detain,10,ru,1423,"7559,5b88",rusu,"absence"
 18,6ce2,waves,8,ha,803,"96fb,6ce2",denpa,"radio waves"
 19,592a,plump,4,ta,120,"4e38,592a",maruta,"log"
@@ -866,3 +866,15 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 861,74a7,holed gem,16,heki,1617,"5b8c,$",kanbeki,perfect;impeccable
 862,7656,mannerism,18,heki,1826,"75c5,$",byouheki,weakness;bad habit
 863,907f,evade,16,hi,1618,"4e0d,53ef,$",fukahi,unavoidable
+864,8b04,facsimile,17,tou,1296,"$,672c",touhon,transcript;certified copy
+865,9a30,inflation,20,tou,2144,"6cb8,$",futtou,boiling
+866,85e4,wisteria,18,tou,1295,"845b,$",kattou,feud;discord
+867,52dd,victory,12,shou,1294,"$,5229",shouri,victory
+868,5076,accidentally,11,guu,2105,"$,50cf",guuzou,idol;image
+869,9047,interview,12,guu,2106,"906d,$",souguu,encounter
+870,9685,corner,12,guu,2108,"4e00,$",ichiguu,one corner
+871,611a,foolish,13,gu,2107,"$,75f4",guchi,grumbling
+872,82d1,garden,8,en,1523,"5fa1,$",gyoen,Emperor's Garden
+873,6028,grudge,9,en,1524,"$,58f0",ensei,complaint;grudging
+874,5b9b,address,8,en,1521,"$,8ee2",enten,smooth;fair (of face)
+875,8155,arm,12,wan,1522,"$,529b",wanryoku,physical strength
