@@ -815,7 +815,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 812,88c1,tailor,12,sai,424,"88c1,7e2b",saihou,sewing;needlework
 813,8f09,load,13,sai,383,"8a18,8f09",kisai,mention (in the press)
 814,683d,plantation,10,sai,382,"683d,57f9",saibai,cultivation;growing
-815,7e4a,slender,17,sen,1929,"7e4a,7dad",seni,fiber;textiles
+815,7e4a,slender,17,sen,1929,"7e4a,7dad",sen:i,fiber;textiles
 816,4f75,join,8,hei,1107,"4f75,7528",heiyou,joint use
 817,5840,fence,12,hei,1136,"5840",hei,fence
 818,9905,mochi,14,hei,1590,"714e,9905",senbei,rice crackers
@@ -891,3 +891,6 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 886,5acc,dislike,13,ken,1724,"$,7591",kengi,suspicion
 886,5acc,dislike,13,gen,1724,"6a5f,$",kigen,mood;disposition
 887,5ec9,bargain,13,ren,1727,"$,58f2",renzai,bargain;sale
+888,5949,dedicate,8,hou,1695,"$,4ed5",houshi,service
+889,4ff8,stipend,10,hou,1696,"5e74,$",nenbou,annual salary
+890,68d2,rod,12,bou,1697,"9244,$",tetsubou,iron bar (or staff)
