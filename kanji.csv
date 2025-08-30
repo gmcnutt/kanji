@@ -906,3 +906,9 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 900,822c,carrier,10,han,2016,"4e00,$",ippan,general;average
 901,642c,conveyer,13,han,2018,"904b,$",unpan,conveyance;transport
 902,76e4,tray,15,ban,2017,"5186,$",enban,disc;discus
+903,6bdb,fur,4,mou,2062,"$,5e03",moufu,blanket
+904,8017,decrease,10,mou,2063,"5e03,$",shoumou,consumption;use
+905,5c3e,tail,7,bi,2064,"$,884c",bikou,following;tailing
+906,67d0,so-and-so,9,bou,1896,"$,6c0f",boushi,a certain person
+907,8b00,conspire,16,bou,1897,"9670,$",inbou,conspiracy;plot
+908,5a92,mediator,12,bai,1898,"$,4ecb",baikai,mediation
