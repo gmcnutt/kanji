@@ -222,7 +222,8 @@ def run_cmd_load(args):
                 on_kata = roma2kata(on_romaji) or None
                 phr = decode_phrase(phr, unicode) if phr else None
                 phr_kana = roma2hira(phr_kana)
-
+                heisig_v1_frame = heisig_v1_frame or None  # empty string -> None
+                rk2 = rk2 or None  # empty string -> None
 
                 # Create/update the kanji
                 kanji = models.Kanji.get(unicode=unicode)
