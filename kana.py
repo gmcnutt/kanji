@@ -37,6 +37,7 @@ ROMA2KATA = {
     'gyo': ('gi', '_yo'),
     'gyu': ('gi', '_yu'),
     'nya': ('n', '_ya'),
+    'nyu': ('n', '_yu'),    
     'hya': ('hi', '_ya'),
     'nyo': ('n', '_yo'),
     'tta': ('_tsu', 'ta'),
@@ -98,6 +99,7 @@ ROMA2HIRA = {
     'gyu': ('gi', '_yu'),
     'sse': ('_tsu', 'se'),
     'nya': ('n', '_ya'),
+    'nyu': ('n', '_yu'),    
     'hya': ('hi', '_ya'),
     'nyo': ('n', '_yo'),
 }

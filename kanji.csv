@@ -919,7 +919,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 ,8ca7,poverty,11,mazu,845,"$,3057,3044",mazushii,poor
 ,60b2,sad,12,kana,1763,"$,3057,3080",kanashimu,mournful
 ,5e78,happiness,8,saiwa,1622,"$,3044",saiwai,blessed
-1342,67d4,tender,9,ni_yuu,1312,"$,548c",ni_yuuwa,gentleness;meekness
+1342,67d4,tender,9,nyuu,1312,"$,548c",nyuuwa,gentleness;meekness
 1342,67d4,tender,9,juu,1312,"$,9053",juudoo,judo
 ,7d99,inherit,13,tsu,1470,"$,3050",tsugu,to inherit
 ,6e07,thirst,11,kawa,488,"$,304f",kawaku,to thirst
@@ -930,3 +930,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 ,5b9f,reality,8,jitsu,1694,"$,73fe",jitsugen,reality
 ,73fe,present,11,gen,275,"5b9f,$",jitsugen,reality
 ,547c,call,8,yo,1597,"$,3076",yobu,to call
+,6170,consolation,15,nagusa,1177,"$,3081,308b",nagusameru,to comfort;to console
+,6df1,deep,11,fuka,1426,"$,3044",fukai,deep
+,6d74,bathe,10,a,852,"$,3073,305b,308b",abiseru,to shower with;to pour over
+1685,53e3,mouth,3,kou,11,"4eba,$",jinkou,population
