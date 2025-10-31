@@ -134,7 +134,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 133,9a13,try,18,ken,0,"8a66,9a13",shiken,"test;examination"
 134,967a,precipitous,11,ken,1672,"5192,967a",bouken,adventure
 135,691c,examination,12,ken,1673,"691c,67fb",kensa,inspection
-136,5263,saber,10,ken,1671,"5263,9053",kendou,Japanese fencing
+136,5263,saber,10,ken,1671,"5263,9053",kendou,Japanese fencing;kendo;kendou
 137,9ebb,hemp,11,ma,593,"9ebb,85ac",mayaku,narcotics
 138,6469,chafe,15,ma,639,"6469,5929,697c",matenrou,skyscraper
 139,78e8,grind,16,ma,594,"7814,78e8",kenma,"grinding;polishing"
@@ -934,3 +934,4 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 ,6df1,deep,11,fuka,1426,"$,3044",fukai,deep
 ,6d74,bathe,10,a,852,"$,3073,305b,308b",abiseru,to shower with;to pour over
 1685,53e3,mouth,3,kou,11,"4eba,$",jinkou,population
+,559c,rejoice,12,yoroko,1553,"$,3073",yorokobi,joy;pleasure;delight
