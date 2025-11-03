@@ -17,7 +17,7 @@ from kana import (decode, decode_phrase, roma2kata, roma2hira, kata2hira,
                   is_hiragana, is_kanji, is_katakana)
 
 
-AGE_FACTOR = 1.6
+AGE_FACTOR = 1.7  # 1.6 too low
 TODAY = datetime.today()
 FMT = '%Y-%m-%d %H:%M:%S'
 
