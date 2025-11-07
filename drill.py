@@ -456,13 +456,18 @@ def run_review_loop(user, model, limit, test_func, instructions, filter=None):
 
     # Ask the questions and track failures. Update the quiz results.
     for i, qr in enumerate(due):
-        if test_func(qr, i, total):
-            qr.streak += 1
-            cprint(f"ok {qr.streak}", "green", attrs=["bold"])
-        else:
-            qr.streak = 0
-            fails.append(qr)
-        qr.last_date = datetime.now()
+        try:
+            if test_func(qr, i, total):
+                qr.streak += 1
+                cprint(f"ok {qr.streak}", "green", attrs=["bold"])
+            else:
+                qr.streak = 0
+                fails.append(qr)
+            qr.last_date = datetime.now()
+        except Exception as e:
+            cprint("Error in quiz {qr}", "red", attrs=["bold"])
+            print(e)
+            cprint("Continuing...", "yellow")
 
     num_correct = total - len(fails)
     percent = round(num_correct * 100 / total)
