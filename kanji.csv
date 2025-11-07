@@ -807,7 +807,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 804,5bb5,wee hours,10,shou,201,"5fb9,5bb5",tesshou,all through the night
 805,524a,plane,9,saku,124,"524a,6e1b",sakugen,reduction;curtailment
 806,8fb0,sign of the dragon,7,shin,2164,"8fb0,5bbf",shinshuku,house of the Dragon (zodiac)
-807,9707,quake,15,shin,2166,"9707,52d5",shintou,quake;shock
+807,9707,quake,15,shin,2166,"9707,52d5",shindou,quake;shock
 808,5a20,with child,10,shin,2168,"598a,5a20",ninshin,pregnancy
 809,632f,shake,10,shin,2167,"4e09,632f",sanshin,three strikes
 810,5507,lips,10,shin,2169,"53e3,5507",koushin,lips
@@ -925,7 +925,7 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 ,6e07,thirst,11,kawa,488,"$,304f",kawaku,to thirst
 ,6e80,full,12,mi,1253,"$,305f,3059",mitasu,to satisfy
 ,54c0,pathetic,9,awa,428,"$,308c,307f",awaremi,pity
-,6f2c,pickling,14,kiyo,1665,"$,3044",kiyoi,pure
+,6e05,pure,14,kiyo,1665,"$,3044",kiyoi,pure
 ,898b,see,7,mi,61,"$,308b",miru,to see
 ,5b9f,reality,8,jitsu,1694,"$,73fe",jitsugen,reality
 ,73fe,present,11,gen,275,"5b9f,$",jitsugen,reality
