@@ -459,9 +459,15 @@ def run_review_loop(user, model, limit, test_func, instructions, filter=None):
         try:
             if test_func(qr, i, total):
                 qr.streak += 1
-                cprint(f"ok {qr.streak}", "green", attrs=["bold"])
+                if qr.streak > 0:
+                    cprint(f"ok {qr.streak}", "green", attrs=["bold"])
+                else:
+                    cprint(f"ok {qr.streak}", "yellow", attrs=["bold"])                    
             else:
-                qr.streak = 0
+                if qr.streak > 0:
+                    qr.streak = 0
+                else:
+                    qr.streak -= 1
                 fails.append(qr)
             qr.last_date = datetime.now()
         except Exception as e:
@@ -479,10 +485,15 @@ def run_review_loop(user, model, limit, test_func, instructions, filter=None):
         cprint(f"Reviewing failures ({failed} cards)", "yellow")
         refails = []
         for i, qr in enumerate(fails):
-            if not test_func(qr, i, failed):
-                refails.append(qr)
+            if test_func(qr, i, failed):
+                qr.streak += 1
+                if qr.streak > 0:
+                    cprint(f"ok {qr.streak}", "green", attrs=["bold"])
+                else:
+                    cprint(f"ok {qr.streak}", "yellow", attrs=["bold"])                
             else:
-                print()
+                refails.append(qr)
+                qr.streak -= 1
         fails = refails
     return total
 
