@@ -922,14 +922,24 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 916,6e90,source,13,gen,153,"$,6cc9",gensen,fountainhead;wellspring
 917,9858,petition,19,gan,143,"5fd7,$",shigan,volunteering
 984,5bb3,harm,10,gai,1671,"8feb,$",hakugai,persecution
+1028,8005,someone,8,sha,1345,"533b,$",isha,doctor
+1258,540c,same,6,dou,192,"$,6642",douji,simultaneous
+1342,67d4,tender,9,nyuu,1312,"$,548c",nyuuwa,gentleness;meekness
+1342,67d4,tender,9,juu,1312,"$,9053",juudoo,judo
+1395,5730,ground,6,chi,554,"$,56f3",chizu,map
+1395,5730,ground,6,ji,554,"$,9707",jishin,earthquake
+1475,8005,someone,8,sha,1345,"533b,$",isha,doctor
+1628,9810,deposit,13,yo,1721,"$,91d1",yokin,deposit (in a bank)
+1628,9810,deposit,13,yo,1721,"$,8a00,8005",yogensha,prophet
+1685,53e3,mouth,3,kou,11,"4eba,$",jinkou,population
+1728,8a00,say,7,gen,357,"$,660e",genmei,statement (press)
+2309,5f79,duty,7,eki,949,"61f2,$",choueki,prison with hard labor
 ,899a,memorize,12,oba,347,"$,3048",obae,awareness
 ,899a,memorize,12,obo,347,"$,3048,308b",oboeru,to remember
 ,60aa,evil,11,atsu,1951,"$,53e3",atsukou,slander
 ,8ca7,poverty,11,mazu,845,"$,3057,3044",mazushii,poor
 ,60b2,sad,12,kana,1763,"$,3057,3080",kanashimu,mournful
 ,5e78,happiness,8,saiwa,1622,"$,3044",saiwai,blessed
-1342,67d4,tender,9,nyuu,1312,"$,548c",nyuuwa,gentleness;meekness
-1342,67d4,tender,9,juu,1312,"$,9053",juudoo,judo
 ,7d99,inherit,13,tsu,1470,"$,3050",tsugu,to inherit
 ,6e07,thirst,11,kawa,488,"$,304f",kawaku,to thirst
 ,6e80,full,12,mi,1253,"$,305f,3059",mitasu,to satisfy
@@ -942,16 +952,16 @@ RK2 index,unicode,meaning,strokes,1st on,RK1 index,exe phr kanji,exe phr kana,ex
 ,6170,consolation,15,nagusa,1177,"$,3081,308b",nagusameru,to comfort;to console
 ,6df1,deep,11,fuka,1426,"$,3044",fukai,deep
 ,6d74,bathe,10,a,852,"$,3073,305b,308b",abiseru,to shower with;to pour over
-1685,53e3,mouth,3,kou,11,"4eba,$",jinkou,population
 ,559c,rejoice,12,yoroko,1553,"$,3073",yorokobi,joy;pleasure;delight
 ,5927,large,3,oo,112,"$,3044,306b",ooini,very;greatly
 ,5927,large,3,oo,112,"$,304d,306a",ookina,big
 ,5831,report,12,muku,1625,"$,3044",mukui,reward (noun)
 ,524d,in front,9,mae,309,"$,306e",maeno,previously;before
-1028,8005,someone,8,sha,1345,"533b,$",isha,doctor
-1475,8005,someone,8,sha,1345,"533b,$",isha,doctor
-1628,9810,deposit,13,yo,1721,"$,91d1",yokin,deposit (in a bank)
-1728,8a00,say,7,gen,357,"$,660e",genmei,statement (press)
-1628,9810,deposit,13,yo,1721,"$,8a00,8005",yogensha,prophet
-1258,540c,same,6,dou,192,"$,6642",douji,simultaneous
 ,540c,same,6,ona,192,"$,3058",onaji,same
+,5869,salt,13,shio,1568,"$",shio,salt
+,6c17,spirit,6,ke,2030,"5869,$",shioke,saltiness
+,5473,flavor,8,aji,233,"5869,$",shioaji,salt flavor
+,4ed8,adhere,5,tsu,1075,"$,3051,308b",tsukeru,to attach
+,7121,nothingness,12,na,1913,"$,304f,306a,308b",nakunaru,to disappear;to become lost
+,4ed8,adhere,5,tsu,1000,"$,3051,308b",tsukeru,to attach;to affix;to make part of;to add
+,5f79,duty,7,yaku,949,"$",yaku,post;office;position;job

@@ -471,7 +471,7 @@ def run_review_loop(user, model, limit, test_func, instructions, filter=None):
                 fails.append(qr)
             qr.last_date = datetime.now()
         except Exception as e:
-            cprint("Error in quiz {qr}", "red", attrs=["bold"])
+            cprint(f"Error in quiz {qr}", "red", attrs=["bold"])
             print(e)
             cprint("Continuing...", "yellow")
 
