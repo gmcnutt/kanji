@@ -206,7 +206,11 @@ def run_cmd_dump(args):
                 print("---readings---")
                 readings = models.Reading.select()
                 for reading in readings:
-                    print(f'{reading.kanji.unicode} in {reading.phrase.unicode} is {reading.kana} ({reading.romaji})')
+                    try:
+                        print(f'{reading.kanji.unicode} in {reading.phrase.unicode} is {reading.kana} ({reading.romaji})')
+                    except Exception as e:
+                        cprint(f"Error in reading {reading}", "red")
+                        print(e)
 
 
 def run_cmd_load(args):
