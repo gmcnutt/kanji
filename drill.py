@@ -85,9 +85,10 @@ def dump_unicode_range(title, start, end):
         print(" | ".join(entries))
 
 
-def get_days_until_due(quiz_result):
+def get_days_until_due(quiz_result, age_factor=None):
+    age_factor = age_factor or AGE_FACTOR
     age = TODAY - quiz_result.last_date
-    days_to_wait = math.ceil(quiz_result.streak * AGE_FACTOR)
+    days_to_wait = math.ceil(quiz_result.streak * age_factor)
     days_until_due = days_to_wait - age.days
     return max(0, days_until_due)
 
@@ -361,7 +362,7 @@ def run_cmd_due(args):
         for result in models.VocabQuizResult.select(user=user):
             vocab_sched[get_days_until_due(result)] += 1
         for result in models.PhraseQuizResult.select(user=user):
-            phrase_sched[get_days_until_due(result)] += 1
+            phrase_sched[get_days_until_due(result, age_factor=1.0)] += 1
 
     # Find the maximum day across all schedules
     max_day = max(
@@ -431,12 +432,12 @@ def run_cmd_uni(args):
         print(f'{k} {hex(ord(k))}')
 
 
-def run_review_loop(user, model, limit, test_func, instructions, filter=None):
+def run_review_loop(user, model, limit, test_func, instructions, filter=None, age_factor=None):
 
     # Get due questions
     due = []
     results = model.select(user=user)
-    due = [r for r in results if (0 == get_days_until_due(r))]
+    due = [r for r in results if (0 == get_days_until_due(r, age_factor=age_factor))]
     if not due:
         cprint(f'{colored("Nothing due", "green")}')
         return 0
@@ -700,7 +701,7 @@ def run_cmd_review(args):
         elif args.drillname == 'phrase':
             run_review_loop(
                 user, models.PhraseQuizResult, args.limit, test_phrase,
-                'Given the hiragana type the meaning'
+                'Given the hiragana type the meaning', age_factor=1.0
             )
 
 if __name__ == "__main__":
