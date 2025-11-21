@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from pony import orm
 import sys, tty, termios
 from termcolor import colored, cprint
+from wcwidth import wcswidth
 
 import models
 from kana import (decode, decode_phrase, roma2kata, roma2hira, kata2hira,
@@ -20,6 +21,17 @@ from kana import (decode, decode_phrase, roma2kata, roma2hira, kata2hira,
 AGE_FACTOR = 1.7  # 1.6 too low
 TODAY = datetime.today()
 FMT = '%Y-%m-%d %H:%M:%S'
+
+
+
+def pad_unicode(text, width):
+    """Pad text to a fixed *display* width."""
+    # Thanks, ChatGPT
+    visible_width = wcswidth(text)
+    if visible_width < 0:
+        visible_width = len(text)   # fallback for unassigned chars
+    padding = width - visible_width
+    return text + " " * max(0, padding)
 
 
 class UserNotFoundError(Exception):
@@ -37,6 +49,51 @@ class NotKanjiError(Exception):
 class BadEntryError(Exception):
     pass
 
+
+class StatsPrinter(object):
+
+    AGE_FACTOR = AGE_FACTOR
+
+    @classmethod
+    def print(klass, user):
+
+        results = list(klass.MODEL_CLASS.select(user=user).order_by(
+                lambda w: (w.streak, w.last_date)
+        ))
+        for r in results:
+            r.days_until_due = get_days_until_due(r, age_factor=klass.AGE_FACTOR)
+        sorted_results = sorted(results, key=lambda r: r.days_until_due)
+        for result in sorted_results:
+            klass._print_result(result)
+
+
+class WritingStatsPrinter(StatsPrinter):
+
+    DRILLNAME = 'write'
+    MODEL_CLASS = models.WritingQuizResult
+
+    @staticmethod
+    def _print_result(result):
+            print(f'{colored(result.kanji.unicode, "cyan", attrs=["bold"])} {result.days_until_due} {colored(result.streak, "green")} {result.last_date}')
+
+
+class PhraseStatsPrinter(StatsPrinter):
+
+    AGE_FACTOR = 1.0
+    DRILLNAME = 'phrase'
+    MODEL_CLASS = models.PhraseQuizResult
+
+    @staticmethod
+    def _print_result(result):
+        hiragana = pad_unicode(result.hiragana, 12)
+        print(f'{colored(hiragana, "cyan", attrs=["bold"]):<12} {colored(result.streak, "green")} {result.days_until_due} {result.last_date}')
+            
+
+STATS_PRINTER_CLASSES = [
+    WritingStatsPrinter,
+    PhraseStatsPrinter
+]
+            
 
 def getch():
     fd = sys.stdin.fileno()
@@ -362,7 +419,7 @@ def run_cmd_due(args):
         for result in models.VocabQuizResult.select(user=user):
             vocab_sched[get_days_until_due(result)] += 1
         for result in models.PhraseQuizResult.select(user=user):
-            phrase_sched[get_days_until_due(result, age_factor=1.0)] += 1
+            phrase_sched[get_days_until_due(result, age_factor=PhraseStatsPrinter.AGE_FACTOR)] += 1
 
     # Find the maximum day across all schedules
     max_day = max(
@@ -404,6 +461,16 @@ def run_cmd_due(args):
     
 
 def run_cmd_stats(args):
+
+    stats_printer = None
+    for klass in STATS_PRINTER_CLASSES:
+        if klass.DRILLNAME == args.drillname:
+            stats_printer = klass
+            break
+
+    if not stats_printer:
+        raise Exception(f"Don't know how to print stats for {args.drillname}")
+        
     db = models.init(args.database_filename)
 
     with orm.db_session:
@@ -412,14 +479,7 @@ def run_cmd_stats(args):
         if not user:
             raise UserNotFoundError(f"User with name '{args.username}' not found")
 
-        results = list(models.WritingQuizResult.select(user=user).order_by(
-                lambda w: (w.streak, w.last_date)
-        ))
-        for r in results:
-            r.days_until_due = get_days_until_due(r)
-        sorted_results = sorted(results, key=lambda r: r.days_until_due)
-        for result in sorted_results:
-            print(f'{colored(result.kanji.unicode, "cyan", attrs=["bold"])} {result.days_until_due} {colored(result.streak, "green")} {result.last_date}')
+        stats_printer.print(user)
             
 
 def run_cmd_roma2hira(args):
@@ -445,11 +505,11 @@ def run_review_loop(user, model, limit, test_func, instructions, filter=None, ag
     available = len(due)
 
     if limit:
-        # Sort by last review date, most recently reviewed first,
-        # before limiting. This facilitates partial review on a huge
-        # backlog, allowing the user to build up memory on recently
-        # reviewed items before adding new items over future sessions.
-        due = sorted(due, key=lambda x: x.last_date, reverse=True)
+        # Sort by streak, lowest count first, before limiting. This
+        # facilitates partial review on a huge backlog, allowing the
+        # user to build up memory on recently reviewed items before
+        # adding new items over future sessions.
+        due = sorted(due, key=lambda x: x.streak)
         due = due[:limit]
     
     # Randomize the list.
@@ -665,7 +725,7 @@ def test_phrase(qr, i, total):
                 f'{colored(r, "red")} should be {colored(phrase.meaning, "white", attrs=["bold"])} ({phrase.unicode}) ',
                 end=''
             )
-            cprint(f"fail", "red", attrs=["bold"])
+            cprint(f"fail {qr.streak}", "red", attrs=["bold"])
             return False
 
     return True
@@ -725,7 +785,7 @@ if __name__ == "__main__":
 
     stats_parser = subp.add_parser("stats", help="Stats kana and known kanji")
     stats_parser.add_argument(
-        '-d', '--drillname', choices=('write', 'read', 'mean', 'vocab'),
+        '-d', '--drillname', choices=('write', 'read', 'mean', 'vocab', 'phrase'),
         default='write'
     )
     stats_parser.set_defaults(func=run_cmd_stats)
