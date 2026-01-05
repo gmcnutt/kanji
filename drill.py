@@ -243,6 +243,18 @@ def add_missing_quiz_results(user):
             qr.phrases.add(phrase)
             
 
+def run_cmd_show_missing(args):
+    db = models.init(args.database_filename)
+    missing = set(range(1,2201))
+    with orm.db_session:
+        kanjis = models.Kanji.select().order_by(lambda k: k.heisig_v1_frame)
+        for k in kanjis:
+            if k.heisig_v1_frame <= 2200:
+                missing.remove(k.heisig_v1_frame)
+        print(missing)
+
+
+    
 def run_cmd_dump(args):
     if args.specific=='kana':
         dump_unicode_range("---hiragana---", 0x3041, 0x3096)
@@ -270,8 +282,7 @@ def run_cmd_dump(args):
                         cprint(f"Error in reading {reading}", "red")
                         print(e)
 
-
-def run_cmd_load(args):
+def load_rk2(args):
     db = models.init(args.database_filename)
     with orm.db_session:
         with open(args.csvfile) as f:
@@ -329,6 +340,44 @@ def run_cmd_load(args):
                 )
         for user in models.User.select():
             add_missing_quiz_results(user)
+
+                        
+def load_rk1(args):
+    db = models.init(args.database_filename)
+    with orm.db_session:
+        with open(args.csvfile) as f:
+            r = csv.reader(f)
+            #header = next(r)
+            for line in r:
+                (unicode, mnemonic_meaning, stroke_count, heisig_v1_frame) = line
+                unicode = decode(unicode)
+                heisig_v1_frame = heisig_v1_frame or None  # empty string -> None
+
+                # Create/update the kanji
+                kanji = models.Kanji.get(unicode=unicode)
+                if kanji is None:
+                    # If the kanji was inserted with the wrong unicode
+                    # but the right meaning, the above lookup failed,
+                    # but we need to update it.
+                    kanji = models.Kanji.get(mnemonic_meaning=mnemonic_meaning)
+                kanji = create_or_update(
+                    models.Kanji,
+                    kanji,
+                    unicode=unicode,
+                    mnemonic_meaning=mnemonic_meaning,
+                    heisig_v1_frame=heisig_v1_frame,
+                    stroke_count=stroke_count
+                )
+
+        for user in models.User.select():
+            add_missing_quiz_results(user)
+
+
+def run_cmd_load(args):
+    if args.type == 'rk2':
+        load_rk2(args)
+    elif args.type == 'rk1':
+        load_rk1(args)
 
 
 def run_cmd_users(args):
@@ -776,6 +825,10 @@ if __name__ == "__main__":
 
     subp = pars.add_subparsers(help="Commands", required=True)
 
+    missing_parser = subp.add_parser("missing", help="Show missing RK1 kanji")
+    missing_parser.set_defaults(func=run_cmd_show_missing)
+
+    
     dump_parser = subp.add_parser("dump", help="Dump kana and known kanji")
     dump_parser.add_argument(
         '-s', '--specific', choices=('kana', 'kanji', 'phrases', 'readings'),
@@ -797,6 +850,7 @@ if __name__ == "__main__":
         '-c', '--csvfile', help="CSV file with kanji data to load",
         default="kanji.csv"
     )
+    load_parser.add_argument('-t', '--type', choices=('rk1', 'rk2'), default='rk1')
     load_parser.set_defaults(func=run_cmd_load)
 
     users_parser = subp.add_parser('users', help='Commands to manage users')
