@@ -349,7 +349,12 @@ def load_rk1(args):
             r = csv.reader(f)
             #header = next(r)
             for line in r:
-                (unicode, mnemonic_meaning, stroke_count, heisig_v1_frame) = line
+                try:
+                    (unicode, mnemonic_meaning, stroke_count, heisig_v1_frame) = line
+                except ValueError as e:
+                    print(e)
+                    print(line)
+                    return
                 unicode = decode(unicode)
                 heisig_v1_frame = heisig_v1_frame or None  # empty string -> None
 
