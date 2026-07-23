@@ -251,7 +251,8 @@ def run_cmd_show_missing(args):
         for k in kanjis:
             if k.heisig_v1_frame <= 2200:
                 missing.remove(k.heisig_v1_frame)
-        print(missing)
+        for k in missing:
+            print(k)
 
 
     
